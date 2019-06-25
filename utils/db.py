@@ -1,9 +1,8 @@
 import json
-import os
 import psycopg2
 
 
-def build_connection(path='../config.json'):
+def build_connection(path):
     with open(path, 'r') as f:
         config = json.loads(f.read())
     con = psycopg2.connect(dbname=config['dbname'], user=config['user'], host=config['host'],
@@ -22,3 +21,4 @@ def check_table(cursor, table, schema='public'):
 
     cursor.execute(check)
     res = cursor.fetchall()[0][0]
+    return res
