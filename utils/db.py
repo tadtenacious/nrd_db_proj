@@ -22,3 +22,9 @@ def check_table(cursor, table, schema='public'):
     cursor.execute(check)
     res = cursor.fetchall()[0][0]
     return res
+
+
+def reader(path):
+    with open(path, 'r') as f:
+        q = f.read()
+    return q
