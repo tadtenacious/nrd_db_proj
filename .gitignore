@@ -1,3 +1,4 @@
-data/*.csv
+*.csv
+*.CSV
 config.json
 .vscode
