@@ -28,3 +28,10 @@ def reader(path):
     with open(path, 'r') as f:
         q = f.read()
     return q
+
+
+def load_csv(cursor, csv_path, target_table):
+    '''Load a csv to a table in postgresql.'''
+    with open(csv_path, 'r') as f:
+        cursor.copy_from(csv_path, sep=',', null='', size=819000)
+    return
