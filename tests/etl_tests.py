@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath('..'))
 def make_sample(in_path, new_path):
     '''Make a sample csv with 1,000 rows'''
     sample = read_csv(in_path, header=None, nrows=1000)
-    sample.to_csv(new_path)
+    sample.to_csv(new_path, index=False)
     return
 
 
@@ -65,6 +65,7 @@ def main():
                 print('Failed creating {}'.format())
         except psycopg2.OperationalError as e:
             print('Failed creating {}'.format(table))
+        print('Dropping {}'.format(table))
         cursor.execute('DROP TABLE IF EXISTS {}'.format(table))
     con.close()
     print('Removing Sample Files')
