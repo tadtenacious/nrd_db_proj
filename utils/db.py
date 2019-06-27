@@ -33,5 +33,5 @@ def reader(path):
 def load_csv(cursor, csv_path, target_table):
     '''Load a csv to a table in postgresql.'''
     with open(csv_path, 'r') as f:
-        cursor.copy_from(csv_path, sep=',', null='', size=819000)
+        cursor.copy_from(f, target_table, sep=',', null='', size=819000)
     return
