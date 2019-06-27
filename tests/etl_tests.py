@@ -14,7 +14,7 @@ def make_sample(in_path, new_path):
 
 
 def main():
-    from utils.db import build_connection, check_table, reader
+    from utils.db import build_connection, check_table, reader, load_csv
     print('Reading sql files...')
     core = reader('../sql/create_raw_core.sql')
     hosp = reader('../sql/create_raw_hospital.sql')
@@ -57,12 +57,15 @@ def main():
             check = check_table(cursor, table)
             if check:
                 print('Successfully created {}'.format(table))
-                cursor.execute('DROP TABLE IF EXISTS {}'.format(table))
+                file_to_load = csv_to_table[table]
+                print('loading {}'.format(table))
+                load_csv(cursor, file_to_load, table)
                 con.commit()
             else:
                 print('Failed creating {}'.format())
         except psycopg2.OperationalError as e:
             print('Failed creating {}'.format(table))
+        cursor.execute('DROP TABLE IF EXISTS {}'.format(table))
     con.close()
     print('Removing Sample Files')
     for sample_file in csv_files.values():
