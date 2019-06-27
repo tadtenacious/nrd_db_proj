@@ -1,8 +1,16 @@
 import os
 import sys
 import psycopg2
+from pandas import read_csv
 
 sys.path.append(os.path.abspath('..'))
+
+
+def make_sample(in_path, new_path):
+    '''Make a sample csv with 1,000 rows'''
+    sample = read_csv(in_path, header=None, nrows=1000)
+    sample.to_csv(new_path)
+    return
 
 
 def main():
