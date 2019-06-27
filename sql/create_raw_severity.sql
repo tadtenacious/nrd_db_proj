@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS public.raw_severity;
+
 CREATE TABLE public.raw_severity (
     aprdrg bigint,
     aprdrg_risk_mortality bigint,

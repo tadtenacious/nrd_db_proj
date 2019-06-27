@@ -1,3 +1,5 @@
+DROP TABLE IF EXITS public.raw_core;
+
 CREATE TABLE public.raw_core (
     age character varying (20) COLLATE pg_catalog. "default",
     aweekend character varying (20) COLLATE pg_catalog. "default",

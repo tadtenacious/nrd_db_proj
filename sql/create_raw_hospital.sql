@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS public.raw_hospital;
+
 CREATE TABLE public.raw_hospital (
     hosp_bedsize bigint,
     h_contrl bigint,
