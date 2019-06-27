@@ -29,8 +29,18 @@ def main():
         '../data/NRD_2016_Hospital.CSV': '../data/SAMPLE_NRD_2016_Hospital.CSV',
         '../data/NRD_2016_Severity.CSV': '../data/SAMPLE_NRD_2016_Severity.CSV'
     }
+    csv_to_table = {
+        'raw_core': '../data/SAMPLE_NRD_2016_Core.CSV',
+        'raw_hospital': '../data/SAMPLE_NRD_2016_Hospital.CSV',
+        'raw_severity': '../data/SAMPLE_NRD_2016_Severity.CSV'
+    }
+    print('Creating sample files.')
     for in_file, new_file in csv_files.items():
-        make_sample(in_file, new_file)
+        try:
+            make_sample(in_file, new_file)
+        except FileNotFoundError as e:
+            print('Please put the HCUP CSV files in the data directory')
+            print(e)
     print('Connecting to server...')
     try:
         con = build_connection('../config.json')
@@ -54,6 +64,9 @@ def main():
         except psycopg2.OperationalError as e:
             print('Failed creating {}'.format(table))
     con.close()
+    print('Removing Sample Files')
+    for sample_file in csv_files.values():
+        os.remove(sample_file)
 
 
 if __name__ == "__main__":
