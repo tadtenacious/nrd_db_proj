@@ -16,8 +16,8 @@ def get_values(sas_section):
     lines = sas_section.split('\n')
     values = []
     for line in lines:
-        if '=' in line:
-            drg, value = line.split('=')
+        if ' = ' in line:
+            drg, value = line.split(' = ')
             vals = (drg.strip().replace("'", ''),
                     value.strip().replace("'", '').strip())
             values .append(vals)
