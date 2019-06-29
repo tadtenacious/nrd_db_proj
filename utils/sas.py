@@ -19,6 +19,13 @@ def get_values(sas_section):
         if '=' in line:
             drg, value = line.split('=')
             vals = (drg.strip().replace("'", ''),
-                    value.strip().replace("'", ''))
+                    value.strip().replace("'", '').strip())
             values .append(vals)
+    return values
+
+
+def parse_hcup_sas(sas_string, format_name):
+    '''Simple function to parse the HCUP SAS file for the desired table.'''
+    section = get_section(sas_string, format_name)
+    values = get_values(section)
     return values
