@@ -9,7 +9,7 @@ SAVE_PATH = os.path.join('data', DRG_FILE_NAME)
 
 
 def download_file(url, save_path):
-    with open(save_path, 'w') as f:
+    with open(save_path, 'wb') as f:
         resp = requests.get(url)
         f.write(resp.content)
     return
