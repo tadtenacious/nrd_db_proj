@@ -3,10 +3,10 @@ import re
 
 def get_section(sas_string, format_name):
     '''Parse the specific HCUP SAS files that holds the DRG tables.'''
-    new_pattern = format_name.replace('*', '\*') + '.*\s+[;]'
+    new_pattern = format_name.replace('*', '\*') + '[^;]*'
     search = re.search(new_pattern, sas_string, re.DOTALL)
     if search:
-        return search.string
+        return search.group(0)
     else:
         return None
 
