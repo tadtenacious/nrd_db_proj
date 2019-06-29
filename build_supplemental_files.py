@@ -20,6 +20,12 @@ def main():
         os.mkdir('data')
     if not os.path.exists(SAVE_PATH):
         download_file(DRG_FORMAT_URL, SAVE_PATH)
+
+    with open(SAVE_PATH, 'r') as f:
+        data = f.read()
+    s = re.search(
+        r'Value DRG33MSF /\* DRG - version 33 to Medical/SurgicalFlag \*/.*\s+[;]', data, re.DOTALL).string
+
     return
 
 
