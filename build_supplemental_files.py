@@ -30,7 +30,7 @@ def main():
     v34_drg_names = sas_file_to_dataframe(
         data, 'Value DRGv34f /* DRG - version 34 */', drg_name_cols, '34')
     drg_names = pd.concat([v33_drg_names, v34_drg_names],
-                          ignore_index=True, sort=False)[['drgver', 'drg', 'drgName']]
+                          ignore_index=True, sort=False)
     # clean the data to match 3 digit DRG codes
     drg_names['drg'] = drg_names['drg'].apply(
         lambda x: x if x == '.' else x.zfill(3))
@@ -39,6 +39,13 @@ def main():
         r'[ 0-9.]+:', '').str.strip()
     drg_names.to_csv('data/lu_drg_names.csv', index=False, header=False)
 
+    msf_cols = ['drg', 'msf']
+    v33_msf = sas_file_to_dataframe(
+        data, 'Value DRG33MSF /* DRG - version 33 to Medical/Surgical Flag */', msf_cols, '33')
+    v34_msf = sas_file_to_dataframe(
+        data, 'Value DRG34MSF /* DRG - version 34 to Medical/Surgical Flag */', msf_cols, '34')
+    lu_msf = pd.concat([v33_msf, v34_msf], ignore_index=True, sort=False)
+    lu_msf.to_csv('data/lu_drg_MedSurgFlag.csv', index=False, header=False)
     return
 
 
