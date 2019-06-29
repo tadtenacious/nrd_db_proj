@@ -1,4 +1,5 @@
 import re
+from pandas import DataFrame
 
 
 def get_section(sas_string, format_name):
@@ -29,3 +30,13 @@ def parse_hcup_sas(sas_string, format_name):
     section = get_section(sas_string, format_name)
     values = get_values(section)
     return values
+
+
+def sas_file_to_dataframe(sas_string, format_name, columns, drgver):
+    '''Read the SAS string and parse the desired table and return a
+    pandas DataFrame.'''
+    values = parse_hcup_sas(sas_string, format_name)
+    dataframe = DataFrame(data=values, columns=columns)
+    dataframe['drgver'] = drgver
+    out_order = ['drgver'] + columns
+    return dataframe[out_order]
