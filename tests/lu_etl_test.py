@@ -20,14 +20,14 @@ def main():
         return
 
     tables = {
-        '"lu_drg_MedSurgFlag"': lu_msf,
+        'lu_drg_msf': lu_msf,
         'lu_drg_names': lu_drg_names,
-        'lu_mdc_names': lu_mdc_names
+        # 'lu_mdc_names': lu_mdc_names
     }
     csv_to_table = {
-        'lu_drg_MedSurgFlag': '../data/lu_drg_MedSurgFlag.csv',
+        'lu_drg_msf': '../data/lu_drg_MedSurgFlag.csv',
         'lu_drg_names': '../data/lu_drg_names.csv',
-        'lu_mdc_names': '../data/lu_mdc_names.csv'
+        # 'lu_mdc_names': '../data/lu_mdc_names.csv'
     }
     total_tests = 0
     failed_tests = []
@@ -43,10 +43,14 @@ def main():
     drop_tables = []
     for table, statement in tables.items():
         try:
+            print('Creating {}'.format(table))
             cursor.execute(statement)
             con.commit()
+            print('Checking {}'.format(table))
             check = check_table(cursor, table)
+            print('Checked {} exists: {}'.format(table, check))
             if check:
+                print('Loading {}'.format(table))
                 file_to_load = csv_to_table[table]
                 load_csv(cursor, file_to_load, table, sep='|')
                 total_tests += 1
@@ -55,8 +59,9 @@ def main():
                 failed_tests.append('Loading {}'.format(table))
                 print('Failed creating/loading {}'.format(table))
                 total_tests += 1
-        except psycopg2.OperationalError as e:
-            print('Failed creating {}'.format(table))
+        except (psycopg2.OperationalError, psycopg2.DataError) as e:
+            print('Failed loading creating {}'.format(table))
+            print(e)
             failed_tests.append('Create {}'.format(table))
         drop_tables.append(table)
         total_tests += 1
