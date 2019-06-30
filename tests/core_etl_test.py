@@ -128,6 +128,7 @@ def main():
             cursor.execute('DROP TABLE IF EXISTS {}'.format(table))
         except psycopg2.OperationalError as e:
             print(e)
+    con.commit()
     con.close()
     print('Removing Sample Files')
     for sample_file in csv_files.values():

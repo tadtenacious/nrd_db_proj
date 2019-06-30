@@ -67,6 +67,7 @@ def main():
             cursor.execute('DROP TABLE IF EXISTS {}'.format(table))
         except psycopg2.OperationalError as e:
             print(e)
+    con.commit()
     con.close()
     print('>>>Summary<<<')
     num_failed = len(failed_tests)
