@@ -22,6 +22,7 @@ def main():
         # tables created entirely in SQL
         readmit = reader('../sql/create_readmit_core.sql')
         target = reader('../sql/create_target_table.sql')
+        nrd_core = reader('../sql/create_nrd_core.sql')
     except FileNotFoundError as e:
         print('Cannot run tests without sql files. Try to download sql files at https://github.com/tadtenacious/nrd_db_proj/tree/master/sql')
         print('Or git clone https://github.com/tadtenacious/nrd_db_proj.git')
@@ -108,7 +109,19 @@ def main():
         print(e)
         failed_tests.append('Create target_table')
     total_tests += 1
-    drop_tables.append('target_table')
+    try:
+        cursor.execute(nrd_core)
+        con.commit()
+        check_target = check_table(cursor, 'nrd_core')
+        if not check_target:
+            failed_tests.append('Create nrd_core')
+    except psycopg2.OperationalError as e:
+        print('Failed creating nrd_core')
+        print(e)
+        failed_tests.append('Create nrd_core')
+    total_tests += 1
+
+    drop_tables.append('nrd_core')
     print('Dropping tables.')
     for table in drop_tables:
         try:
