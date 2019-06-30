@@ -1,6 +1,7 @@
-DROP TABLE IF EXISTS public.lu_drg_names;
+DROP TABLE IF EXISTS public.lu_mdc_names;
 
-CREATE TABLE public.lu_drg_names (
+CREATE TABLE public.lu_mdc_names (
     drgver character varying (255) COLLATE pg_catalog. "default",
-    drg character varying (255) COLLATE pg_catalog. "default",
-    "drgName" character varying (255) COLLATE pg_catalog. "default")
+    mdc character varying (255) COLLATE pg_catalog. "default",
+    mdc_name character varying (255) COLLATE pg_catalog. "default",
+    mdc_short character varying (255) COLLATE pg_catalog. "default")
