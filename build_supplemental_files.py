@@ -37,7 +37,8 @@ def main():
     # clean the name field
     drg_names['drgName'] = drg_names['drgName'].str.replace(
         r'[ 0-9.]+:', '').str.strip()
-    drg_names.to_csv('data/lu_drg_names.csv', index=False, header=False)
+    drg_names.to_csv('data/lu_drg_names.csv',
+                     index=False, header=False, sep='|')
 
     msf_cols = ['drg', 'msf']
     v33_msf = sas_file_to_dataframe(
@@ -45,18 +46,19 @@ def main():
     v34_msf = sas_file_to_dataframe(
         data, 'Value DRG34MSF /* DRG - version 34 to Medical/Surgical Flag */', msf_cols, '34')
     lu_msf = concat([v33_msf, v34_msf], ignore_index=True, sort=False)
-    lu_msf.to_csv('data/lu_drg_MedSurgFlag.csv', index=False, header=False)
+    lu_msf.to_csv('data/lu_drg_MedSurgFlag.csv',
+                  index=False, header=False, sep='|')
 
     mdc_cols = ['mdc', 'mdc_name']
     v33_mdc = sas_file_to_dataframe(
         data, 'Value MDCv33f /* MDC - version 33 */', mdc_cols, '33')
     v34_mdc = sas_file_to_dataframe(
         data, 'Value MDCv34f /* MDC - version 34 */', mdc_cols, '34')
-    lu_mdc = concat([v33_mdc, v34_mdc], ignore_index=True, sort=False)
+    lu_mdc = concat([v33_mdc, v34_mdc], ignore_index=True, sort=False,)
     # clean the mdcn_name field
     lu_mdc['mdc_name'] = lu_mdc['mdc_name'].str.replace(
         r'[ 0-9.]+:', '').str.strip()
-    lu_mdc.to_csv('data/lu_mdc_names.csv', index=False, header=False)
+    lu_mdc.to_csv('data/lu_mdc_names.csv', index=False, header=False, sep='|')
 
     return
 
