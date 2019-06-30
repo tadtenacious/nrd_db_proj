@@ -78,7 +78,7 @@ def main():
                 con.commit()
             else:
                 failed_tests.append('Loading {}'.format(table))
-                print('Failed creating {}'.format())
+                print('Failed creating {}'.format(table))
                 total_tests += 1
         except psycopg2.OperationalError as e:
             print('Failed creating {}'.format(table))
