@@ -22,16 +22,16 @@ def main():
     tables = {
         'lu_drg_msf': lu_msf,
         'lu_drg_names': lu_drg_names,
-        # 'lu_mdc_names': lu_mdc_names
+        'lu_mdc_names': lu_mdc_names
     }
     csv_to_table = {
         'lu_drg_msf': '../data/lu_drg_MedSurgFlag.csv',
         'lu_drg_names': '../data/lu_drg_names.csv',
-        # 'lu_mdc_names': '../data/lu_mdc_names.csv'
+        'lu_mdc_names': '../data/lu_mdc_names.csv'
     }
     total_tests = 0
     failed_tests = []
-
+    print('Running Tests.')
     try:
         con = build_connection('../config.json')
         cursor = con.cursor()
@@ -43,14 +43,10 @@ def main():
     drop_tables = []
     for table, statement in tables.items():
         try:
-            print('Creating {}'.format(table))
             cursor.execute(statement)
             con.commit()
-            print('Checking {}'.format(table))
             check = check_table(cursor, table)
-            print('Checked {} exists: {}'.format(table, check))
             if check:
-                print('Loading {}'.format(table))
                 file_to_load = csv_to_table[table]
                 load_csv(cursor, file_to_load, table, sep='|')
                 total_tests += 1
