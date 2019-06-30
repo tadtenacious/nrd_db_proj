@@ -15,12 +15,19 @@ def make_sample(in_path, new_path):
 
 def main():
     from utils.db import build_connection, check_table, reader, load_csv
-    core = reader('../sql/create_raw_core.sql')
-    hosp = reader('../sql/create_raw_hospital.sql')
-    severity = reader('../sql/create_raw_severity.sql')
-    # tables created entirely in SQL
-    readmit = reader('../sql/create_readmit_core.sql')
-    target = reader('../sql/create_target_table.sql')
+    try:
+        core = reader('../sql/create_raw_core.sql')
+        hosp = reader('../sql/create_raw_hospital.sql')
+        severity = reader('../sql/create_raw_severity.sql')
+        # tables created entirely in SQL
+        readmit = reader('../sql/create_readmit_core.sql')
+        target = reader('../sql/create_target_table.sql')
+    except FileNotFoundError as e:
+        print('Cannot run tests without sql files. Try to download sql files at https://github.com/tadtenacious/nrd_db_proj/tree/master/sql')
+        print('Or git clone https://github.com/tadtenacious/nrd_db_proj.git')
+        print(e)
+        return
+
     tables = {
         'raw_core': core,
         'raw_hospital': hosp,
@@ -43,6 +50,7 @@ def main():
         except FileNotFoundError as e:
             print('Please put the HCUP CSV files in the data directory')
             print(e)
+            return
     print('Connecting to server...')
     print('Running Tests.')
     total_tests = 0
