@@ -25,6 +25,7 @@ def main():
     except FileNotFoundError as e:
         print('Cannot run tests without sql files. Try to download sql files at https://github.com/tadtenacious/nrd_db_proj/tree/master/sql')
         print('Or git clone https://github.com/tadtenacious/nrd_db_proj.git')
+        print('Make sure you are running tests inside "tests" directory.')
         print(e)
         return
 
