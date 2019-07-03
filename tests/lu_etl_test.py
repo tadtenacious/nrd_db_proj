@@ -36,7 +36,7 @@ def main():
         con = build_connection('../config.json')
         cursor = con.cursor()
     except psycopg2.OperationalError as e:
-        print('Connection to server unsuccesful.\nRerun setp_config.py')
+        print('Connection to server unsuccesful.\nRerun setup_config.py')
         print(e)
         print('\nCannot run tests without successful connection to server.')
         return
