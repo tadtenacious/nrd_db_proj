@@ -644,6 +644,6 @@ WHERE
 	
 -------------------------------------------------------
 
-DROP Materialized View IF EXISTS temp_prior_frequency;
+-- DROP Materialized View IF EXISTS temp_prior_frequency;
 
-DROP Materialized View IF EXISTS temp_prior_recency;
+-- DROP Materialized View IF EXISTS temp_prior_recency;
