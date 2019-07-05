@@ -301,7 +301,7 @@ WHERE
 		pir_mostrecent_admit = 1;
 		
 ---------------------------------------
-DROP MATERIALIZED VIEW feature_set IF EXISTS;
+DROP MATERIALIZED VIEW  IF EXISTS feature_set;
 CREATE MATERIALIZED VIEW feature_set AS
 SELECT DISTINCT
 c.target,
