@@ -1,11 +1,11 @@
--- DROP Materialized View IF EXISTS temp_prior_frequency;
+DROP Materialized View IF EXISTS temp_prior_frequency;
 
--- DROP Materialized View IF EXISTS temp_prior_recency;
+DROP Materialized View IF EXISTS temp_prior_recency;
 
 -------------------------------------------------------
 
--- CREATE Materialized View temp_prior_frequency AS
-CREATE LOCAL TEMP TABLE temp_prior_frequency AS
+CREATE Materialized View temp_prior_frequency AS
+-- CREATE LOCAL TEMP TABLE temp_prior_frequency AS
 SELECT 
 		 ncs.nrd_visitlink  --designates the unique pt
 		,ncs.key_nrd  --designates the unique index visit, use to join to main data set
@@ -139,8 +139,8 @@ GROUP BY
 		
 -------------------------------------------------------
 
--- CREATE Materialized View temp_prior_recency AS
-CREATE LOCAL TEMP TABLE temp_prior_recency AS
+CREATE Materialized View temp_prior_recency AS
+-- CREATE LOCAL TEMP TABLE temp_prior_recency AS
 
 select tr.* from  
 (SELECT 
@@ -301,7 +301,7 @@ WHERE
 		pir_mostrecent_admit = 1;
 		
 ---------------------------------------
-
+DROP MATERIALIZED VIEW feature_set IF EXISTS;
 CREATE MATERIALIZED VIEW feature_set AS
 SELECT DISTINCT
 c.target,
@@ -639,11 +639,11 @@ LEFT JOIN lu_mdc_names as lu_mdc
 WHERE 
 	1=1
 	AND c.dmonth NOT IN ('1','12')
-	AND c.died = '0'
+	AND c.died = '0';
 	--LIMIT 100;
 	
 -------------------------------------------------------
 
--- DROP Materialized View IF EXISTS temp_prior_frequency;
+DROP Materialized View IF EXISTS temp_prior_frequency;
 
--- DROP Materialized View IF EXISTS temp_prior_recency;
+DROP Materialized View IF EXISTS temp_prior_recency;
