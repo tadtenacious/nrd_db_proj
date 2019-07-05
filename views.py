@@ -5,6 +5,7 @@ from utils.db import build_connection, reader
 def main():
     con = build_connection('config.json')
     views = reader('sql/create_views.sql')
+    print('Creating views. This will take a while.')
     try:
         cursor = con.cursor()
         cursor.execute(views)
