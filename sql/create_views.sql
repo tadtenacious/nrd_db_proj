@@ -1,10 +1,11 @@
-DROP Materialized View IF EXISTS temp_prior_frequency;
+-- DROP Materialized View IF EXISTS temp_prior_frequency;
 
-DROP Materialized View IF EXISTS temp_prior_recency;
+-- DROP Materialized View IF EXISTS temp_prior_recency;
 
 -------------------------------------------------------
 
-CREATE Materialized View temp_prior_frequency AS
+-- CREATE Materialized View temp_prior_frequency AS
+CREATE LOCAL TEMP TABLE temp_prior_frequency AS
 SELECT 
 		 ncs.nrd_visitlink  --designates the unique pt
 		,ncs.key_nrd  --designates the unique index visit, use to join to main data set
@@ -138,7 +139,8 @@ GROUP BY
 		
 -------------------------------------------------------
 
-CREATE Materialized View temp_prior_recency AS
+-- CREATE Materialized View temp_prior_recency AS
+CREATE LOCAL TEMP TABLE temp_prior_recency AS
 
 select tr.* from  
 (SELECT 
@@ -642,6 +644,6 @@ WHERE
 	
 -------------------------------------------------------
 
-DROP Materialized View IF EXISTS temp_prior_frequency;
+-- DROP Materialized View IF EXISTS temp_prior_frequency;
 
-DROP Materialized View IF EXISTS temp_prior_recency;
+-- DROP Materialized View IF EXISTS temp_prior_recency;
