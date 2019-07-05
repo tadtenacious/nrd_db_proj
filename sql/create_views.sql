@@ -300,7 +300,7 @@ WHERE
 		
 ---------------------------------------
 
-CREATE MATERIALIZED VIEW pgltw2 AS
+CREATE MATERIALIZED VIEW feature_set AS
 SELECT DISTINCT
 c.target,
 c.age,
