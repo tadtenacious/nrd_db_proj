@@ -103,8 +103,8 @@ def main():
             print('Error creating {}'.format(table))
             print(e)
             con.rollback()
-            con.close()
-            return
+    con.close()
+    return
     print('Initial ETL completed.')
 
 
