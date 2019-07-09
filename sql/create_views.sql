@@ -1,6 +1,6 @@
-DROP Materialized View IF EXISTS temp_prior_frequency;
+DROP Materialized View IF EXISTS temp_prior_frequency CASCADE;
 
-DROP Materialized View IF EXISTS temp_prior_recency;
+DROP Materialized View IF EXISTS temp_prior_recency CASCADE;
 
 -------------------------------------------------------
 
@@ -640,10 +640,9 @@ WHERE
 	1=1
 	AND c.dmonth NOT IN ('1','12')
 	AND c.died = '0';
-	--LIMIT 100;
-	
--------------------------------------------------------
 
--- DROP Materialized View IF EXISTS temp_prior_frequency;
+DROP Materialized View IF EXISTS feature_set_sample CASCADE;
 
--- DROP Materialized View IF EXISTS temp_prior_recency;
+CREATE Materialized View feature_set_sample AS
+
+SELECT * FROM feature_set TABLESAMPLE system (1) REPEATABLE (101);
