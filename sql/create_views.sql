@@ -371,7 +371,7 @@ c.i10_necause,
 c.i10_npr,
 -- c.nrd_daystoevent,
 c.nrd_stratum,
--- c.nrd_visitlink,
+c.nrd_visitlink,
 c.pay1,
 c.pl_nchs,
 c.i10_pr1,
@@ -641,8 +641,25 @@ WHERE
 	AND c.dmonth NOT IN ('1','12')
 	AND c.died = '0';
 
+
+
+
+DROP Materialized View IF EXISTS visitlink_sample CASCADE;
+CREATE MATERIALIZED VIEW visitlink_sample
+AS
+ SELECT DISTINCT a.nrd_visitlink
+   FROM ( SELECT raw_core.nrd_visitlink
+           FROM raw_core
+         LIMIT 150000) a
+ LIMIT 10000;
+
+
 DROP Materialized View IF EXISTS feature_set_sample CASCADE;
+CREATE Materialized View feature_set_sample
+AS
+SELECT a.* FROM feature_set a
+INNER JOIN visitlink_sample b ON a.nrd_visitlink = b.nrd_visitlink;
 
-CREATE Materialized View feature_set_sample AS
+-- CREATE Materialized View feature_set_sample AS
 
-SELECT * FROM feature_set TABLESAMPLE system (1) REPEATABLE (101);
+-- SELECT * FROM feature_set TABLESAMPLE system (1) REPEATABLE (101);
