@@ -17,6 +17,7 @@ def etl(con, cursor):
         readmit = reader('sql/create_readmit_core.sql')
         target = reader('sql/create_target_table.sql')
         nrd_core = reader('sql/create_nrd_core.sql')
+        update_nrd_core_drg = reader('sql/update_nrd_core_drg.sql')
     except FileNotFoundError as e:
         print('SQL files not found. Try to download sql files at https://github.com/tadtenacious/nrd_db_proj/tree/master/sql')
         print(e)
@@ -93,5 +94,13 @@ def etl(con, cursor):
             print(e)
             con.rollback()
             return
+    print('Updating drg column in nrd_core.')
+    try:
+        cursor.execute(update_nrd_core_drg)
+        con.commit()
+    except psycopg2.OperationalError as e:
+        print('Error updating nrd_core drg column.')
+        print(e)
+        con.rollback()
     print('Initial ETL completed.')
     return
