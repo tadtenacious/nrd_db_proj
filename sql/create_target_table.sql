@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.target_table;
+DROP TABLE IF EXISTS public.target_table CASCADE;
 
 CREATE TABLE public.target_table AS SELECT DISTINCT
     a.key_nrd AS key_nrd,

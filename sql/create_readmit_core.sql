@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.readmit_core;
+DROP TABLE IF EXISTS public.readmit_core CASCADE;
 
 CREATE TABLE public.readmit_core AS
 SELECT

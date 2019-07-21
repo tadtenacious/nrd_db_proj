@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.lu_drg_names;
+DROP TABLE IF EXISTS public.lu_drg_names CASCADE;
 
 CREATE TABLE public.lu_drg_names (
     drgver character varying (255) COLLATE pg_catalog. "default",

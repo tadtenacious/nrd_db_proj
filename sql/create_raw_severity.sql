@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.raw_severity;
+DROP TABLE IF EXISTS public.raw_severity CASCADE;
 
 CREATE TABLE public.raw_severity (
     aprdrg bigint,

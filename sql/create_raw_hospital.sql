@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.raw_hospital;
+DROP TABLE IF EXISTS public.raw_hospital CASCADE;
 
 CREATE TABLE public.raw_hospital (
     hosp_bedsize bigint,

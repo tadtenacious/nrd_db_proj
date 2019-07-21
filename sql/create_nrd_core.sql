@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.nrd_core;
+DROP TABLE IF EXISTS public.nrd_core CASCADE;
 
 CREATE TABLE public.nrd_core AS
 SELECT
