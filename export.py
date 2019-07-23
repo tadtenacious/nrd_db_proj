@@ -6,7 +6,7 @@ def export(sample=False):
     con = build_connection('config.json')
     cursor = con.cursor()
     select = 'SELECT * FROM feature_set'
-    table_sample = ' TABLESAMPLE SYSTEM (1) REPEATABLE (101)'
+    table_sample = "WHERE substring(key_nrd,8,1) = '1' and substring(key_nrd,9,1)='3'"
     if sample:
         query = select + table_sample
         file_name = 'data/feature_set_sample.csv'
