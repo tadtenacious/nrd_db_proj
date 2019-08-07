@@ -1,4 +1,4 @@
-from utils.db import build_connection
+from src.db import build_connection
 import argparse
 
 

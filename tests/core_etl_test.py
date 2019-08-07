@@ -14,7 +14,7 @@ def make_sample(in_path, new_path):
 
 
 def main():
-    from utils.db import build_connection, check_table, reader, load_csv
+    from src.db import build_connection, check_table, reader, load_csv
     try:
         core = reader('../sql/create_raw_core.sql')
         hosp = reader('../sql/create_raw_hospital.sql')

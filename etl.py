@@ -1,9 +1,9 @@
 import psycopg2
 
-from utils.db import build_connection
-from utils.etl import etl
-from utils.supplement import build_supplemental_files
-from utils.views import make_views
+from src.db import build_connection
+from src.etl import etl
+from src.supplement import build_supplemental_files
+from src.views import make_views
 
 
 def main():

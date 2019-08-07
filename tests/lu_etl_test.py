@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath('..'))
 
 
 def main():
-    from utils.db import build_connection, check_table, reader, load_csv
+    from src.db import build_connection, check_table, reader, load_csv
     try:
         lu_msf = reader('../sql/create_lu_drg_MedSurgFlag.sql')
         lu_drg_names = reader('../sql/create_lu_drg_names.sql')
