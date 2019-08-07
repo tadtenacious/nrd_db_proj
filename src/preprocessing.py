@@ -12,3 +12,8 @@ def fill_cat(dataframe):
     '''Set missing values for categorical variables and fill with -1.'''
     dataframe[dataframe < -4] = nan
     return dataframe.fillna(-1)
+
+
+def preprocess(dataframe):
+    '''Calls fill_mean and fill_cat to preprocess the hcup data'''
+    return dataframe.pipe(fill_mean).pipe(fill_cat)
