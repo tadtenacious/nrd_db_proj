@@ -2,11 +2,13 @@ import os
 import sys
 from pandas import DataFrame, Series
 from numpy import nan
+import requests
 # import pytest
 
 sys.path.append('..')
 from src.db import build_connection, reader, check_table, load_csv
 from src.preprocessing import fill_mean, fill_cat, preprocess
+from src.supplement import DRG_FORMAT_URL, download_file
 
 
 def test_config_file_exists():
@@ -69,3 +71,19 @@ def test_preprocessing():
         {'col1': [100, 100, -99], 'col2': [1, -4, -5]}).pipe(preprocess)
     assert df1.equals(
         DataFrame({'col1': [100.0, 100.0, 100.0], 'col2': [1.0, -4.0, -1.0]}))
+
+
+def test_download_file(tmpdir):
+    # test downloading the file
+    p = tmpdir.join('the_sas_file.txt')
+    save_path = os.path.join(p.dirname, p.basename)
+    download_file(DRG_FORMAT_URL, save_path)
+    with open(save_path, 'r') as f:
+        content = f.read()
+    assert content != ''  # check if file was actually written to
+    assert type(content) == str
+    # check if the target patterns exist in the file
+    assert 'Value DRGv33f /* DRG - version 33 */' in content
+    assert 'Value DRGv34f /* DRG - version 34 */' in content
+    assert 'Value DRG33MSF /* DRG - version 33 to Medical/Surgical Flag */' in content
+    assert 'Value DRG34MSF /* DRG - version 34 to Medical/Surgical Flag */' in content
