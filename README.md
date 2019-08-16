@@ -14,28 +14,28 @@ A datascience project using the HCUP National Readmission Database to predict ho
 
 ### Instructions
 1. Clone this repository:
-   ```console
+   ```
    git clone https://github.com/tadtenacious/nrd_db_proj.git
    ```
 2. Create a virtual environment with the required libraries:
-```console
+```
     conda env create --name nrd -f=env.yml
 ```
 3. Store the 3 csv files from HCUP in the data directory.
 4. Activate the virtual environment:
-   ```console
+   ```
    conda activate nrd
    ```
 5. Create the configuration file for connecting to the database.
-   ```console
+   ```
    python setup_config.py
    ```
 6. Run the tests. This is done from the parent directory, so no need to cd into `tests`.
-   ```console
+   ```
    python -m pytest
    ```
 7. Load the data to the database and perform most of the feature engineering.
-   ```console
+   ```
    python etl.py
    ```
 8. Extract the data.
