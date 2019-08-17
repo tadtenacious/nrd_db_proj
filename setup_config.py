@@ -14,13 +14,11 @@ def check_for_config():
 
 def create_config():
     user = input('Enter database User Name: ')
-    pw = getpass.getpass('Enter password: ')
     host = input('Enter Host name: ')
     dbname = input('Enter Database Name: ')
     config_dict = {
         'user': user,
         'host': host,
-        'password': pw,
         'dbname': dbname
     }
     with open('config.json', 'w') as f:
@@ -31,7 +29,7 @@ def create_config():
 
 def test_connect(config):
     user = config['user']
-    pw = config['password']
+    pw = getpass.getpass('Please enter your password:\n')
     host = config['host']
     test = False
     try:
