@@ -7,7 +7,7 @@ def build_connection(path, timeout=10):
     '''Build the connection to the postgresql databse.'''
     with open(path, 'r') as f:
         config = json.loads(f.read())
-    pw = getpass.getpass(('Please enter your password:\n'))
+    pw = getpass.getpass('Please enter your password:\n')
     con = psycopg2.connect(dbname=config['dbname'], user=config['user'], host=config['host'],
                            password=pw, connect_timeout=timeout)
     return con
