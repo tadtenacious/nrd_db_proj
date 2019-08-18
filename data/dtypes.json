@@ -34,6 +34,7 @@
     "samedayevent": "int8",
     "totchg": "int64",
     "zipinc_qrtl": "int8",
+    "hosp_nrd": "int32",
     "hosp_bedsize": "int8",
     "h_contrl": "int8",
     "hosp_urcat4": "int8",
