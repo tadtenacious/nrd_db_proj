@@ -3,22 +3,44 @@ import json
 import numpy as np
 import pandas as pd
 from lightgbm import LGBMClassifier
+from sklearn.cluster import KMeans
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
 from src.preprocessing import fill_cat, fill_mean, preprocess
+
+HOSP_COLUMNS = [
+    'hosp_bedsize',
+    'h_contrl',
+    'hosp_nrd',
+    'hosp_urcat4',
+    'hosp_ur_teach',
+    'nrd_stratum',
+    'n_disc_u',
+    'n_hosp_u',
+    's_disc_u',
+    's_hosp_u',
+    'total_disc',
+    'year'
+]
 
 
 def run_model(file_path='data/feature_set_sample.csv'):
     with open('data/dtypes.json', 'r') as f:
         dtypes = json.loads(f.read())
     use_cols = list(dtypes.keys())
-
     X = pd.read_csv(file_path, usecols=use_cols, dtype=dtypes)
     y = X['target']
-
     X.drop('target', axis=1, inplace=True)
 
+    hosp_data = pd.read_csv('data/NRD_2016_Hospital.CSV', names=HOSP_COLUMNS)
+    hospX = hosp_data.drop('hosp_nrd', axis=1)
+    kmeans = KMeans(n_clusters=8, random_state=101)
+    kmeans.fit(hospX)
+    clusters = kmeans.predict(hospX)
+    hosp_data['cluster'] = clusters
+    X = X.merge(hosp_data[['hosp_nrd', 'cluster']],
+                on='hosp_nrd').drop('hosp_nrd', axis=1)
     folds = 5
     skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=101)
     scores = []
