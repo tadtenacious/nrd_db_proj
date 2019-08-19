@@ -35,7 +35,7 @@ def run_model(file_path='data/feature_set_sample.csv'):
 
     hosp_data = pd.read_csv('data/NRD_2016_Hospital.CSV', names=HOSP_COLUMNS)
     hospX = hosp_data.drop('hosp_nrd', axis=1)
-    kmeans = KMeans(n_clusters=8, random_state=101)
+    kmeans = KMeans(n_clusters=4, random_state=101)
     kmeans.fit(hospX)
     clusters = kmeans.predict(hospX)
     hosp_data['cluster'] = clusters
