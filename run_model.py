@@ -18,7 +18,13 @@ def run_model(file_path='data/feature_set_sample.csv'):
     y = X['target']
 
     X.drop('target', axis=1, inplace=True)
-
+    age_labels = ['0-3', '5-18', '19-36', '37-54', '55-72', '73+']
+    age_bins = [0, 4, 19, 37, 55, 73, 90]
+    # age_labels = [i for i in range(0, len(age_bins) - 1)]
+    X['age_bins'] = pd.cut(X['age'], age_bins, right=False,
+                           labels=age_labels)
+    dummies = pd.get_dummies(X['age_bins'], drop_first=True)
+    X = X.join(dummies).drop('age_bins', axis=1)
     folds = 5
     skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=101)
     scores = []
