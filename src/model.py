@@ -1,4 +1,5 @@
 import json
+import os
 import numpy as np
 import pandas as pd
 from lightgbm import LGBMClassifier
@@ -9,6 +10,9 @@ from .preprocessing import fill_cat, fill_mean, preprocess
 
 
 def run_model(file_path='data/feature_set_sample.csv'):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(
+            file_path + ' not found. Try running python nrd.py -h for help.')
     with open('data/dtypes.json', 'r') as f:
         dtypes = json.loads(f.read())
     use_cols = list(dtypes.keys())
