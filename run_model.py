@@ -4,25 +4,11 @@ import numpy as np
 import pandas as pd
 from lightgbm import LGBMClassifier
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
 from src.preprocessing import fill_cat, fill_mean, preprocess
-
-HOSP_COLUMNS = [
-    'hosp_bedsize',
-    'h_contrl',
-    'hosp_nrd',
-    'hosp_urcat4',
-    'hosp_ur_teach',
-    'nrd_stratum',
-    'n_disc_u',
-    'n_hosp_u',
-    's_disc_u',
-    's_hosp_u',
-    'total_disc',
-    'year'
-]
 
 
 def run_model(file_path='data/feature_set_sample.csv'):
@@ -30,17 +16,8 @@ def run_model(file_path='data/feature_set_sample.csv'):
         dtypes = json.loads(f.read())
     use_cols = list(dtypes.keys())
     X = pd.read_csv(file_path, usecols=use_cols, dtype=dtypes)
-
-    hosp_data = pd.read_csv('data/NRD_2016_Hospital.CSV', names=HOSP_COLUMNS)
-    hospX = hosp_data.drop('hosp_nrd', axis=1)
-    kmeans = KMeans(n_clusters=4, random_state=101)
-    kmeans.fit(hospX)
-    clusters = kmeans.predict(hospX)
-    hosp_data['cluster'] = clusters
-    X = X.merge(hosp_data[['hosp_nrd', 'cluster']],
-                on='hosp_nrd').drop('hosp_nrd', axis=1)
     y = X['target']
-    X.drop('target', axis=1, inplace=True)
+    X.drop(['target', 'hosp_nrd'], axis=1, inplace=True)
     folds = 5
     skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=101)
     scores = []
@@ -58,6 +35,17 @@ def run_model(file_path='data/feature_set_sample.csv'):
         X_train, X_test = X.loc[train_index, ].pipe(
             preprocess), X.loc[test_index, ]
         X_test = X_test.pipe(fill_mean, means=X_train.mean()).pipe(fill_cat)
+        pca = PCA(n_components=2)
+        pca.fit(X_train)
+        pca_Xtrain = pca.transform(X_train)
+        kmeans = KMeans(n_clusters=4)
+        train_clusters = kmeans.fit_predict(pca_Xtrain)
+        X_train = np.hstack(
+            (X_train, train_clusters.reshape(train_clusters.shape[0], 1)))
+        pca_Xtest = pca.transform(X_test)
+        test_clusters = kmeans.predict(pca_Xtest)
+        X_test = np.hstack(
+            (X_test, test_clusters.reshape(test_clusters.shape[0], 1)))
         y_train, y_test = y[train_index], y[test_index]
         clf.fit(X_train, y_train)
         probas = clf.predict_proba(X_test)[:, 1]
