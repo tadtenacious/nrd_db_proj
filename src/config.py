@@ -60,7 +60,7 @@ def config():
     if run_test.upper() == 'Y':
         test = test_connect(config)
         if test:
-            print('Connection to server successful.')
+            print('Connection to server successful. You are ready to run the tests.')
         else:
             print(
                 'Connection to server failed. Please check credentials and host location.')

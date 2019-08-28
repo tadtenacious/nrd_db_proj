@@ -5,7 +5,7 @@ from lightgbm import LGBMClassifier
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
-from src.preprocessing import fill_cat, fill_mean, preprocess
+from .preprocessing import fill_cat, fill_mean, preprocess
 
 
 def run_model(file_path='data/feature_set_sample.csv'):
