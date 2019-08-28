@@ -30,8 +30,6 @@ def run_model(file_path='data/feature_set_sample.csv'):
         dtypes = json.loads(f.read())
     use_cols = list(dtypes.keys())
     X = pd.read_csv(file_path, usecols=use_cols, dtype=dtypes)
-    y = X['target']
-    X.drop('target', axis=1, inplace=True)
 
     hosp_data = pd.read_csv('data/NRD_2016_Hospital.CSV', names=HOSP_COLUMNS)
     hospX = hosp_data.drop('hosp_nrd', axis=1)
@@ -41,6 +39,8 @@ def run_model(file_path='data/feature_set_sample.csv'):
     hosp_data['cluster'] = clusters
     X = X.merge(hosp_data[['hosp_nrd', 'cluster']],
                 on='hosp_nrd').drop('hosp_nrd', axis=1)
+    y = X['target']
+    X.drop('target', axis=1, inplace=True)
     folds = 5
     skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=101)
     scores = []
