@@ -1,10 +1,7 @@
 from src.db import build_connection
-import argparse
 
 
-def export(sample=False):
-    con = build_connection('config.json')
-    cursor = con.cursor()
+def export(cursor, sample=False):
     select = 'SELECT * FROM feature_set'
     table_sample = " WHERE substring(key_nrd,8,1) = '1' and substring(key_nrd,9,1)='3'"
     if sample:
@@ -21,18 +18,5 @@ def export(sample=False):
     print(msg)
     with open(file_name, 'w') as f:
         cursor.copy_expert(output, f)
-    con.close()
     print('Data export complete.')
     return
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='Export data from postgresql server')
-    parser.add_argument(
-        '--sample', help='Option to export 1% sample', action='store_true')
-    args = parser.parse_args()
-    sample = False
-    if args.sample:
-        sample = True
-    export(sample)
