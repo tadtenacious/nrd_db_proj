@@ -3,6 +3,7 @@ import psycopg2
 from .db import check_table, reader, load_csv, build_connection
 from src.supplement import build_supplemental_files
 from src.views import make_views
+from src.export import export
 
 
 def etl(con, cursor):
@@ -120,5 +121,7 @@ def do_etl():
         return
     etl(con, cursor)
     make_views(con, cursor)
+    export(cursor, sample=False)
+    export(cursor, sample=True)
     con.close()
     return
