@@ -1,3 +1,4 @@
+import argparse
 import json
 import numpy as np
 import pandas as pd
@@ -78,5 +79,15 @@ def run_model(file_path='data/feature_set_sample.csv'):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Run the model on the sample or full data set.'
+        ' Default without args is to use the sample')
+    parser.add_argument(
+        '--sample', help='Option to model on sample', action='store_true')
+    parser.add_argument(
+        '--full', help='Option to run model on full data set.', action='store_true')
+    args = parser.parse_args()
     file_path = 'data/feature_set_sample.csv'
+    if args.full:
+        file_path = 'data/feature_set.csv'
     run_model(file_path)
