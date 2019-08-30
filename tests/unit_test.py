@@ -26,6 +26,15 @@ def test_reader(tmpdir):
     assert content == 'This is a test'
 
 
+def test_data_files_exist():
+    assert os.path.exists(
+        'data/NRD_2016_Core.CSV') and os.path.isfile('data/NRD_2016_Core.CSV')
+    assert os.path.exists(
+        'data/NRD_2016_Hospital.CSV') and os.path.isfile('data/NRD_2016_Hospital.CSV')
+    assert os.path.exists(
+        'data/NRD_2016_Severity.CSV') and os.path.isfile('data/NRD_2016_Severity.CSV')
+
+
 def test_check_table(cursor):
     cursor.execute(
         """CREATE TABLE IF NOT EXISTS test.test_table (col1 INT, col2 INT)""")

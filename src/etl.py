@@ -1,6 +1,9 @@
 import os
 import psycopg2
-from .db import check_table, reader, load_csv
+from .db import check_table, reader, load_csv, build_connection
+from src.supplement import build_supplemental_files
+from src.views import make_views
+from src.export import export
 
 
 def etl(con, cursor):
@@ -103,4 +106,22 @@ def etl(con, cursor):
         print(e)
         con.rollback()
     print('Initial ETL completed.')
+    return
+
+
+def do_etl():
+    # create the supplemental files
+    build_supplemental_files()
+    try:
+        con = build_connection('config.json')
+        cursor = con.cursor()
+    except psycopg2.OperationalError as e:
+        print('An error occured connecting to the server. Please check your configuration file.')
+        print(e)
+        return
+    etl(con, cursor)
+    make_views(con, cursor)
+    export(cursor, sample=False)
+    export(cursor, sample=True)
+    con.close()
     return
