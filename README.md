@@ -28,16 +28,22 @@ A datascience project using the HCUP National Readmission Database to predict ho
    ```
 5. Create the configuration file for connecting to the database.
    ```
-   (nrd) $ python setup_config.py
+   (nrd) $ python nrd.py --config
    ```
 6. Run the tests. This is done from the parent directory, so no need to cd into `tests`.
    ```
    python -m pytest
    ```
-7. Load the data to the database and perform most of the feature engineering.
+7. Load the data to the database and perform most of the feature engineering. The full and sample data sets will also be extracted. The full data set is roughly 7.4 GB on disk. 
    ```
-   (nrd) $ python etl.py
+   (nrd) $ python nrd.py --etl
    ```
-8. Extract the data.
-   `python export.py --sample` exports a 1% sample. `python export.py` exports the full 13,961,484 row data set (roughly 7.4 GB on disk).
-9.  Run the model. `python run_model.py` and `python run_model.py --sample` will run the model on the 1% sample. `python run_model.py --full` runs the model on the full data set.
+
+8.  Run the model on the sample.
+   ```
+    (nrd) $ python nrd.py --model sample
+   ```
+9. Run the model on the full data set. This was only successfully run on a computer with 125 GB of RAM.
+    ```
+    (nrd) $ python nrd.py --model full
+    ```
