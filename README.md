@@ -39,10 +39,10 @@ A datascience project using the HCUP National Readmission Database to predict ho
    (nrd) $ python nrd.py --etl
    ```
 
-8.  Run the model on the sample.
-   ```
+8.  Run the model on the sample. 
+    ```
     (nrd) $ python nrd.py --model sample
-   ```
+    ```
 9. Run the model on the full data set. This was only successfully run on a computer with 125 GB of RAM.
     ```
     (nrd) $ python nrd.py --model full
