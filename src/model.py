@@ -1,17 +1,18 @@
-import argparse
 import json
+import os
 import numpy as np
 import pandas as pd
 from lightgbm import LGBMClassifier
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
-from src.preprocessing import fill_cat, fill_mean, preprocess
+from .preprocessing import fill_cat, fill_mean, preprocess
 
 
 def run_model(file_path='data/feature_set_sample.csv'):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(
+            file_path + ' not found. Try running python nrd.py -h for help.')
     with open('data/dtypes.json', 'r') as f:
         dtypes = json.loads(f.read())
     use_cols = list(dtypes.keys())
@@ -20,7 +21,6 @@ def run_model(file_path='data/feature_set_sample.csv'):
     X.drop(['target', 'hosp_nrd'], axis=1, inplace=True)
     age_labels = ['0-3', '5-18', '19-36', '37-54', '55-72', '73+']
     age_bins = [0, 4, 19, 37, 55, 73, 90]
-    # age_labels = [i for i in range(0, len(age_bins) - 1)]
     X['age_bins'] = pd.cut(X['age'], age_bins, right=False,
                            labels=age_labels)
     dummies = pd.get_dummies(X['age_bins'], drop_first=True)
@@ -29,7 +29,7 @@ def run_model(file_path='data/feature_set_sample.csv'):
     skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=101)
     scores = []
     print('Starting training...')
-    oof_preds = np.zeros(X.shape[0])
+    # oof_preds = np.zeros(X.shape[0])
     for i, (train_index, test_index) in enumerate(skf.split(X, y), 1):
         clf = LGBMClassifier(boosting_type='gbdt', class_weight=None, colsample_bytree=0.6,
                              importance_type='split', learning_rate=0.1, max_depth=-1,
@@ -42,17 +42,6 @@ def run_model(file_path='data/feature_set_sample.csv'):
         X_train, X_test = X.loc[train_index, ].pipe(
             preprocess), X.loc[test_index, ]
         X_test = X_test.pipe(fill_mean, means=X_train.mean()).pipe(fill_cat)
-        pca = PCA(n_components=2)
-        pca.fit(X_train)
-        pca_Xtrain = pca.transform(X_train)
-        kmeans = KMeans(n_clusters=4)
-        train_clusters = kmeans.fit_predict(pca_Xtrain)
-        X_train = np.hstack(
-            (X_train, train_clusters.reshape(train_clusters.shape[0], 1)))
-        pca_Xtest = pca.transform(X_test)
-        test_clusters = kmeans.predict(pca_Xtest)
-        X_test = np.hstack(
-            (X_test, test_clusters.reshape(test_clusters.shape[0], 1)))
         y_train, y_test = y[train_index], y[test_index]
         clf.fit(X_train, y_train)
         probas = clf.predict_proba(X_test)[:, 1]
@@ -61,18 +50,3 @@ def run_model(file_path='data/feature_set_sample.csv'):
         scores.append(auc)
     mean_auc = np.mean(scores)
     print('Mean AUC: {:.4f}'.format(mean_auc))
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='Run the model on the sample or full data set.'
-        ' Default without args is to use the sample')
-    parser.add_argument(
-        '--sample', help='Option to model on sample', action='store_true')
-    parser.add_argument(
-        '--full', help='Option to run model on full data set.', action='store_true')
-    args = parser.parse_args()
-    file_path = 'data/feature_set_sample.csv'
-    if args.full:
-        file_path = 'data/feature_set.csv'
-    run_model(file_path)

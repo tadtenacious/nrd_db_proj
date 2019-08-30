@@ -43,7 +43,7 @@ def test_connect(config):
     return test
 
 
-def main():
+def config():
     check = check_for_config()
     if check:
         overwrite = input(
@@ -60,7 +60,7 @@ def main():
     if run_test.upper() == 'Y':
         test = test_connect(config)
         if test:
-            print('Connection to server successful.')
+            print('Connection to server successful. You are ready to run the tests.')
         else:
             print(
                 'Connection to server failed. Please check credentials and host location.')
@@ -69,4 +69,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    config()
