@@ -10,108 +10,108 @@ SELECT
 		 ncs.nrd_visitlink  --designates the unique pt
 		,ncs.key_nrd  --designates the unique index visit, use to join to main data set
 		,count(pv_ncs.key_nrd) pif_visits  --count of visits in the prior thirty days to an index event
-		,sum(case when (pv_ncs.aweekend::INT = 0 or pv_ncs.aweekend::INT = 1) then pv_ncs.aweekend::INT else 0 end) pif_aweekend --Admission day is on a weekend
-		,sum(case when (pv_ncs.elective::INT = 0 or pv_ncs.elective::INT = 1) then pv_ncs.elective::INT else 0 end) pif_elective  --Elective versus non-elective admission
- 		,sum(case when pv_ncs.hcup_ed::INT = 0 then 0 else 1 end) pif_hcup_ed  --HCUP indicator of emergency department record
+		,sum(case when (pv_ncs.aweekend = 0 or pv_ncs.aweekend = 1) then pv_ncs.aweekend else 0 end) pif_aweekend --Admission day is on a weekend
+		,sum(case when (pv_ncs.elective = 0 or pv_ncs.elective = 1) then pv_ncs.elective else 0 end) pif_elective  --Elective versus non-elective admission
+ 		,sum(case when pv_ncs.hcup_ed = 0 then 0 else 1 end) pif_hcup_ed  --HCUP indicator of emergency department record
  		,count(distinct pv_ncs.hosp_nrd) pif_hosp_nrd  --	HCUP NRD hospital identification number
- 		,sum(case when pv_ncs.los::INT >= 0 and pv_ncs.los::INT <= 365 then pv_ncs.los::INT else 0 end) pif_los --Length of stay, cleaned
- 		,sum(pv_ncs.i10_ndx::INT) pif_i10_ndx --Number of ICD-10-CM diagnoses on this discharge
- 		,sum(pv_ncs.i10_necause::INT) pif_i10_necause --Number of ICD-10-CM External Cause of Morbidity codes on this record
- 		,sum(pv_ncs.i10_npr::INT) pif_i10_npr --Number of ICD-10-PCS procedures on this discharge
+ 		,sum(case when pv_ncs.los >= 0 and pv_ncs.los <= 365 then pv_ncs.los else 0 end) pif_los --Length of stay, cleaned
+ 		,sum(pv_ncs.i10_ndx) pif_i10_ndx --Number of ICD-10-CM diagnoses on this discharge
+ 		,sum(pv_ncs.i10_necause) pif_i10_necause --Number of ICD-10-CM External Cause of Morbidity codes on this record
+ 		,sum(pv_ncs.i10_npr) pif_i10_npr --Number of ICD-10-PCS procedures on this discharge
 -- msf medical (M) or surgical procedure (P)
  		,sum(case when msf.msf = 'M' then 1 else 0 end) pif_msf_M   --medical procedure
 		,sum(case when msf.msf = 'P' then 1 else 0 end) pif_msf_P   --surgical procedure
 --  ,dispuniform
- 		,sum(case when pv_ncs.dispuniform::INT = 1 then 1 else 0 end) pif_dispuniform_routine  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  1	Routine
-		,sum(case when pv_ncs.dispuniform::INT = 2 then 1 else 0 end) pif_dispuniform_sth  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  2	Transfer to Short-term Hospital
-		,sum(case when pv_ncs.dispuniform::INT = 5 then 1 else 0 end) pif_dispuniform_otherMedFac  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  5	Transfer Other Including Skilled Nursing Facility (SNF), Intermediate Care Facility (ICF), Another Type
-		,sum(case when pv_ncs.dispuniform::INT = 6 then 1 else 0 end) pif_dispuniform_hhc  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  6	Home Health Care (HHC)
-		,sum(case when pv_ncs.dispuniform::INT = 7 then 1 else 0 end) pif_dispuniform_ama  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  7	Against Medical Advice (AMA)
-		,sum(case when pv_ncs.dispuniform::INT = 99 then 1 else 0 end) pif_dispuniform_unk  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  99	Discharge alive, destination unknown
+ 		,sum(case when pv_ncs.dispuniform = 1 then 1 else 0 end) pif_dispuniform_routine  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  1	Routine
+		,sum(case when pv_ncs.dispuniform = 2 then 1 else 0 end) pif_dispuniform_sth  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  2	Transfer to Short-term Hospital
+		,sum(case when pv_ncs.dispuniform = 5 then 1 else 0 end) pif_dispuniform_otherMedFac  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  5	Transfer Other Including Skilled Nursing Facility (SNF), Intermediate Care Facility (ICF), Another Type
+		,sum(case when pv_ncs.dispuniform = 6 then 1 else 0 end) pif_dispuniform_hhc  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  6	Home Health Care (HHC)
+		,sum(case when pv_ncs.dispuniform = 7 then 1 else 0 end) pif_dispuniform_ama  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  7	Against Medical Advice (AMA)
+		,sum(case when pv_ncs.dispuniform = 99 then 1 else 0 end) pif_dispuniform_unk  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  99	Discharge alive, destination unknown
 --  ,pv_ncs.pay1		
- 		,sum(case when pv_ncs.pay1::INT = 1 then 1 else 0 end) pif_pay1_1 --Expected primary payer, uniform 	Medicare
- 		,sum(case when pv_ncs.pay1::INT = 2 then 1 else 0 end) pif_pay1_2 --Expected primary payer, uniform 	Medicaid
- 		,sum(case when pv_ncs.pay1::INT = 3 then 1 else 0 end) pif_pay1_3 --Expected primary payer, uniform   Private insurance
- 		,sum(case when pv_ncs.pay1::INT = 4 then 1 else 0 end) pif_pay1_4 --Expected primary payer, uniform   Self-pay
- 		,sum(case when pv_ncs.pay1::INT = 5 then 1 else 0 end) pif_pay1_5 --Expected primary payer, uniform   No charge
- 		,sum(case when pv_ncs.pay1::INT = 6 then 1 else 0 end) pif_pay1_6 --Expected primary payer, uniform   Other
- 		,sum(case when pv_ncs.pay1::INT NOT IN(1,2,3,4,5,6) then 1 else 0 end) pif_pay1_7 --Expected primary payer, uniform  **Missing
+ 		,sum(case when pv_ncs.pay1 = 1 then 1 else 0 end) pif_pay1_1 --Expected primary payer, uniform 	Medicare
+ 		,sum(case when pv_ncs.pay1 = 2 then 1 else 0 end) pif_pay1_2 --Expected primary payer, uniform 	Medicaid
+ 		,sum(case when pv_ncs.pay1 = 3 then 1 else 0 end) pif_pay1_3 --Expected primary payer, uniform   Private insurance
+ 		,sum(case when pv_ncs.pay1 = 4 then 1 else 0 end) pif_pay1_4 --Expected primary payer, uniform   Self-pay
+ 		,sum(case when pv_ncs.pay1 = 5 then 1 else 0 end) pif_pay1_5 --Expected primary payer, uniform   No charge
+ 		,sum(case when pv_ncs.pay1 = 6 then 1 else 0 end) pif_pay1_6 --Expected primary payer, uniform   Other
+ 		,sum(case when pv_ncs.pay1 NOT IN(1,2,3,4,5,6) then 1 else 0 end) pif_pay1_7 --Expected primary payer, uniform  **Missing
 --  ,pv_ncs.pl_nchs	
-		,sum(case when pv_ncs.pl_nchs::INT = 1 then 1 else 0 end) pif_pl_nchs_1 --Patient Location: NCHS Urban-Rural Code   "Central" counties of metro areas of >=1 million population
- 		,sum(case when pv_ncs.pl_nchs::INT = 2 then 1 else 0 end) pif_pl_nchs_2 --Patient Location: NCHS Urban-Rural Code   "Fringe" counties of metro areas of >=1 million population
- 		,sum(case when pv_ncs.pl_nchs::INT = 3 then 1 else 0 end) pif_pl_nchs_3 --Patient Location: NCHS Urban-Rural Code   Counties in metro areas of 250,000-999,999 population
- 		,sum(case when pv_ncs.pl_nchs::INT = 4 then 1 else 0 end) pif_pl_nchs_4 --Patient Location: NCHS Urban-Rural Code   Counties in metro areas of 50,000-249,999 population
- 		,sum(case when pv_ncs.pl_nchs::INT = 5 then 1 else 0 end) pif_pl_nchs_5 --Patient Location: NCHS Urban-Rural Code   Micropolitan counties
- 		,sum(case when pv_ncs.pl_nchs::INT = 6 then 1 else 0 end) pif_pl_nchs_6 --Patient Location: NCHS Urban-Rural Code   Not metropolitan or micropolitan counties
- 		,sum(case when pv_ncs.pl_nchs::INT NOT IN(1,2,3,4,5,6) then 1 else 0 end) pif_pl_nchs_7   --Patient Location: NCHS Urban-Rural Code  **Missing
+		,sum(case when pv_ncs.pl_nchs = 1 then 1 else 0 end) pif_pl_nchs_1 --Patient Location: NCHS Urban-Rural Code   "Central" counties of metro areas of >=1 million population
+ 		,sum(case when pv_ncs.pl_nchs = 2 then 1 else 0 end) pif_pl_nchs_2 --Patient Location: NCHS Urban-Rural Code   "Fringe" counties of metro areas of >=1 million population
+ 		,sum(case when pv_ncs.pl_nchs = 3 then 1 else 0 end) pif_pl_nchs_3 --Patient Location: NCHS Urban-Rural Code   Counties in metro areas of 250,000-999,999 population
+ 		,sum(case when pv_ncs.pl_nchs = 4 then 1 else 0 end) pif_pl_nchs_4 --Patient Location: NCHS Urban-Rural Code   Counties in metro areas of 50,000-249,999 population
+ 		,sum(case when pv_ncs.pl_nchs = 5 then 1 else 0 end) pif_pl_nchs_5 --Patient Location: NCHS Urban-Rural Code   Micropolitan counties
+ 		,sum(case when pv_ncs.pl_nchs = 6 then 1 else 0 end) pif_pl_nchs_6 --Patient Location: NCHS Urban-Rural Code   Not metropolitan or micropolitan counties
+ 		,sum(case when pv_ncs.pl_nchs NOT IN(1,2,3,4,5,6) then 1 else 0 end) pif_pl_nchs_7   --Patient Location: NCHS Urban-Rural Code  **Missing
 -- 		,pv_ncs.prday1
-	  ,sum(case when pv_ncs.prday1::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday1_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday1::INT IN(0) then 1 else 0 end) pif_prday1_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday1::INT >0 and pv_ncs.prday1::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday1_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday1 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday1_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday1 IN(0) then 1 else 0 end) pif_prday1_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday1 >0 and pv_ncs.prday1 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday1_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday2
-	  ,sum(case when pv_ncs.prday2::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday2_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday2::INT IN(0) then 1 else 0 end) pif_prday2_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday2::INT >0 and pv_ncs.prday2::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday2_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday2 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday2_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday2 IN(0) then 1 else 0 end) pif_prday2_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday2 >0 and pv_ncs.prday2 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday2_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday3
-	  ,sum(case when pv_ncs.prday3::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday3_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday3::INT IN(0) then 1 else 0 end) pif_prday3_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday3::INT >0 and pv_ncs.prday3::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday3_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday3 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday3_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday3 IN(0) then 1 else 0 end) pif_prday3_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday3 >0 and pv_ncs.prday3 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday3_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday4
-	  ,sum(case when pv_ncs.prday4::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday4_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday4::INT IN(0) then 1 else 0 end) pif_prday4_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday4::INT >0 and pv_ncs.prday4::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday4_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday4 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday4_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday4 IN(0) then 1 else 0 end) pif_prday4_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday4 >0 and pv_ncs.prday4 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday4_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday5
-	  ,sum(case when pv_ncs.prday5::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday5_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday5::INT IN(0) then 1 else 0 end) pif_prday5_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday5::INT >0 and pv_ncs.prday5::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday5_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday5 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday5_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday5 IN(0) then 1 else 0 end) pif_prday5_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday5 >0 and pv_ncs.prday5 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday5_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday6
-	  ,sum(case when pv_ncs.prday6::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday6_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday6::INT IN(0) then 1 else 0 end) pif_prday6_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday6::INT >0 and pv_ncs.prday6::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday6_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday6 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday6_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday6 IN(0) then 1 else 0 end) pif_prday6_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday6 >0 and pv_ncs.prday6 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday6_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday7
-	  ,sum(case when pv_ncs.prday7::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday7_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday7::INT IN(0) then 1 else 0 end) pif_prday7_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday7::INT >0 and pv_ncs.prday7::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday7_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday7 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday7_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday7 IN(0) then 1 else 0 end) pif_prday7_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday7 >0 and pv_ncs.prday7 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday7_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday8
-	  ,sum(case when pv_ncs.prday8::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday8_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday8::INT IN(0) then 1 else 0 end) pif_prday8_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday8::INT >0 and pv_ncs.prday8::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday8_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday8 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday8_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday8 IN(0) then 1 else 0 end) pif_prday8_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday8 >0 and pv_ncs.prday8 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday8_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday9
-	  ,sum(case when pv_ncs.prday9::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday9_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday9::INT IN(0) then 1 else 0 end) pif_prday9_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday9::INT >0 and pv_ncs.prday9::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday9_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday9 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday9_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday9 IN(0) then 1 else 0 end) pif_prday9_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday9 >0 and pv_ncs.prday9 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday9_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday10
-	  ,sum(case when pv_ncs.prday10::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday10_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday10::INT IN(0) then 1 else 0 end) pif_prday10_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday10::INT >0 and pv_ncs.prday10::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday10_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday10 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday10_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday10 IN(0) then 1 else 0 end) pif_prday10_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday10 >0 and pv_ncs.prday10 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday10_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday11
-	  ,sum(case when pv_ncs.prday11::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday11_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday11::INT IN(0) then 1 else 0 end) pif_prday11_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday11::INT >0 and pv_ncs.prday11::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday11_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday11 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday11_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday11 IN(0) then 1 else 0 end) pif_prday11_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday11 >0 and pv_ncs.prday11 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday11_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday12
-	  ,sum(case when pv_ncs.prday12::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday12_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday12::INT IN(0) then 1 else 0 end) pif_prday12_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday12::INT >0 and pv_ncs.prday12::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday12_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday12 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday12_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday12 IN(0) then 1 else 0 end) pif_prday12_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday12 >0 and pv_ncs.prday12 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday12_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday13
-	  ,sum(case when pv_ncs.prday13::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday13_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday13::INT IN(0) then 1 else 0 end) pif_prday13_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday13::INT >0 and pv_ncs.prday13::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday13_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday13 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday13_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday13 IN(0) then 1 else 0 end) pif_prday13_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday13 >0 and pv_ncs.prday13 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday13_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday14
-	  ,sum(case when pv_ncs.prday14::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday14_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday14::INT IN(0) then 1 else 0 end) pif_prday14_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday14::INT >0 and pv_ncs.prday14::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday14_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday14 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday14_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday14 IN(0) then 1 else 0 end) pif_prday14_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday14 >0 and pv_ncs.prday14 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday14_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday15
-	  ,sum(case when pv_ncs.prday15::INT IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday15_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday15::INT IN(0) then 1 else 0 end) pif_prday15_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday15::INT >0 and pv_ncs.prday15::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pif_prday15_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
- 		,sum(pv_ncs.rehabtransfer::INT) pif_rehabtransfer   --A combined record involving transfer to rehabilitation, evaluation, or other aftercare
- 		,sum(pv_ncs.resident::INT) pif_resident   --Identifies patient as a resident of the State in which he or she received hospital care
- 		,sum(case when pv_ncs.samedayevent::INT = 0 then 1 else 0 end) pif_samedayevent_noxfer  --	Identifies transfer and same-day stay collapsed records, 	Not a transfer or other same-day stay
- 		,sum(case when pv_ncs.samedayevent::INT = 1 then 1 else 0 end) pif_samedayevent_xfer  --	Identifies transfer and same-day stay collapsed records, 	Transfer involving two discharges from different hospitals
- 		,sum(case when pv_ncs.samedayevent::INT = 2 then 1 else 0 end) pif_samedayevent_diffHosp  --	Identifies transfer and same-day stay collapsed records, 		Same-day stay involving two discharges from different hospitals
- 		,sum(case when pv_ncs.samedayevent::INT = 3 then 1 else 0 end) pif_samedayevent_sameHosp  --	Identifies transfer and same-day stay collapsed records, 	Same-day stay involving two discharges at the same hospital
- 		,sum(case when pv_ncs.samedayevent::INT = 4 then 1 else 0 end) pif_samedayevent_3orMoredisch  --	Identifies transfer and same-day stay collapsed records, 	Same-day stay involving three or more discharges at the same or different hospitals		
- 		,sum(case when pv_ncs.totchg::INT NOT IN(-999999999) then pv_ncs.totchg::INT else 0 end) pif_totalchg   --Total charges, cleaned
+	  ,sum(case when pv_ncs.prday15 IN(-4,-3,-2,-1) then 1 else 0 end) pif_prday15_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday15 IN(0) then 1 else 0 end) pif_prday15_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday15 >0 and pv_ncs.prday15 <= (pv_ncs.los +3) then 1 else 0 end) pif_prday15_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+ 		,sum(pv_ncs.rehabtransfer) pif_rehabtransfer   --A combined record involving transfer to rehabilitation, evaluation, or other aftercare
+ 		,sum(pv_ncs.resident) pif_resident   --Identifies patient as a resident of the State in which he or she received hospital care
+ 		,sum(case when pv_ncs.samedayevent = 0 then 1 else 0 end) pif_samedayevent_noxfer  --	Identifies transfer and same-day stay collapsed records, 	Not a transfer or other same-day stay
+ 		,sum(case when pv_ncs.samedayevent = 1 then 1 else 0 end) pif_samedayevent_xfer  --	Identifies transfer and same-day stay collapsed records, 	Transfer involving two discharges from different hospitals
+ 		,sum(case when pv_ncs.samedayevent = 2 then 1 else 0 end) pif_samedayevent_diffHosp  --	Identifies transfer and same-day stay collapsed records, 		Same-day stay involving two discharges from different hospitals
+ 		,sum(case when pv_ncs.samedayevent = 3 then 1 else 0 end) pif_samedayevent_sameHosp  --	Identifies transfer and same-day stay collapsed records, 	Same-day stay involving two discharges at the same hospital
+ 		,sum(case when pv_ncs.samedayevent = 4 then 1 else 0 end) pif_samedayevent_3orMoredisch  --	Identifies transfer and same-day stay collapsed records, 	Same-day stay involving three or more discharges at the same or different hospitals		
+ 		,sum(case when pv_ncs.totchg NOT IN(-999999999) then pv_ncs.totchg else 0 end) pif_totalchg   --Total charges, cleaned
 
 FROM 
 	nrd_core AS ncs 
@@ -123,11 +123,11 @@ FROM
 				 
 WHERE 
 	1=1
-	AND ncs.dmonth NOT IN ('1','12')
-	AND ncs.dispuniform <> '20'
+	AND ncs.dmonth NOT IN (1,12)
+	AND ncs.dispuniform <> 20
 	AND ncs.key_nrd <> pv_ncs.key_nrd
 	AND ncs.nrd_daystoevent >= pv_ncs.nrd_daystoevent
-	AND (ncs.nrd_daystoevent::INT - pv_ncs.los::INT - pv_ncs.nrd_daystoevent::INT) <= 30
+	AND (ncs.nrd_daystoevent - pv_ncs.los - pv_ncs.nrd_daystoevent) <= 30
 	
 /*For testing*/	
 	--AND ncs.nrd_visitlink = 'd4p2zwd'
@@ -152,111 +152,111 @@ select tr.* from
 		,pv_ncs.drg pir_prev_drg
 		,case when ncs.drg = pv_ncs.drg then 1 else 0 end pir_drg_match
 		,ROW_NUMBER () OVER (PARTITION BY ncs.nrd_visitlink, ncs.nrd_daystoevent ORDER BY pv_ncs.nrd_daystoevent desc) pir_mostrecent_admit
-		,(ncs.nrd_daystoevent::INT - pv_ncs.los::INT - pv_ncs.nrd_daystoevent::INT) pir_days_between
+		,(ncs.nrd_daystoevent - pv_ncs.los - pv_ncs.nrd_daystoevent) pir_days_between
 		,ncs.target pir_target
 		,count(pv_ncs.key_nrd) pir_visits  --count of visits in the prior thirty days to an index event
-		,sum(case when (pv_ncs.aweekend::INT = 0 or pv_ncs.aweekend::INT = 1) then pv_ncs.aweekend::INT else 0 end) pir_aweekend --Admission day is on a weekend
-		,sum(case when (pv_ncs.elective::INT = 0 or pv_ncs.elective::INT = 1) then pv_ncs.elective::INT else 0 end) pir_elective  --Elective versus non-elective admission
- 		,sum(case when pv_ncs.hcup_ed::INT = 0 then 0 else 1 end) pir_hcup_ed  --HCUP indicator of emergency department record
+		,sum(case when (pv_ncs.aweekend = 0 or pv_ncs.aweekend = 1) then pv_ncs.aweekend else 0 end) pir_aweekend --Admission day is on a weekend
+		,sum(case when (pv_ncs.elective = 0 or pv_ncs.elective = 1) then pv_ncs.elective else 0 end) pir_elective  --Elective versus non-elective admission
+ 		,sum(case when pv_ncs.hcup_ed = 0 then 0 else 1 end) pir_hcup_ed  --HCUP indicator of emergency department record
  		,count(distinct pv_ncs.hosp_nrd) pir_hosp_nrd  --	HCUP NRD hospital identification number
- 		,sum(case when pv_ncs.los::INT >= 0 and pv_ncs.los::INT <= 365 then pv_ncs.los::INT else 0 end) pir_los --Length of stay, cleaned
- 		,sum(pv_ncs.i10_ndx::INT) pir_i10_ndx --Number of ICD-10-CM diagnoses on this discharge
- 		,sum(pv_ncs.i10_necause::INT) pir_i10_necause --Number of ICD-10-CM External Cause of Morbidity codes on this record
- 		,sum(pv_ncs.i10_npr::INT) pir_i10_npr --Number of ICD-10-PCS procedures on this discharge
+ 		,sum(case when pv_ncs.los >= 0 and pv_ncs.los <= 365 then pv_ncs.los else 0 end) pir_los --Length of stay, cleaned
+ 		,sum(pv_ncs.i10_ndx) pir_i10_ndx --Number of ICD-10-CM diagnoses on this discharge
+ 		,sum(pv_ncs.i10_necause) pir_i10_necause --Number of ICD-10-CM External Cause of Morbidity codes on this record
+ 		,sum(pv_ncs.i10_npr) pir_i10_npr --Number of ICD-10-PCS procedures on this discharge
 -- msf medical (M) or surgical procedure (P)
  		,sum(case when msf.msf = 'M' then 1 else 0 end) pir_msf_M   --medical procedure
 		,sum(case when msf.msf = 'P' then 1 else 0 end) pir_msf_P   --surgical procedure
 --  ,dispuniform
- 		,sum(case when pv_ncs.dispuniform::INT = 1 then 1 else 0 end) pir_dispuniform_routine  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  1	Routine
-		,sum(case when pv_ncs.dispuniform::INT = 2 then 1 else 0 end) pir_dispuniform_sth  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  2	Transfer to Short-term Hospital
-		,sum(case when pv_ncs.dispuniform::INT = 5 then 1 else 0 end) pir_dispuniform_otherMedFac  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  5	Transfer Other Including Skilled Nursing Facility (SNF), Intermediate Care Facility (ICF), Another Type
-		,sum(case when pv_ncs.dispuniform::INT = 6 then 1 else 0 end) pir_dispuniform_hhc  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  6	Home Health Care (HHC)
-		,sum(case when pv_ncs.dispuniform::INT = 7 then 1 else 0 end) pir_dispuniform_ama  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  7	Against Medical Advice (AMA)
-		,sum(case when pv_ncs.dispuniform::INT = 99 then 1 else 0 end) pir_dispuniform_unk  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  99	Discharge alive, destination unknown
+ 		,sum(case when pv_ncs.dispuniform = 1 then 1 else 0 end) pir_dispuniform_routine  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  1	Routine
+		,sum(case when pv_ncs.dispuniform = 2 then 1 else 0 end) pir_dispuniform_sth  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  2	Transfer to Short-term Hospital
+		,sum(case when pv_ncs.dispuniform = 5 then 1 else 0 end) pir_dispuniform_otherMedFac  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  5	Transfer Other Including Skilled Nursing Facility (SNF), Intermediate Care Facility (ICF), Another Type
+		,sum(case when pv_ncs.dispuniform = 6 then 1 else 0 end) pir_dispuniform_hhc  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  6	Home Health Care (HHC)
+		,sum(case when pv_ncs.dispuniform = 7 then 1 else 0 end) pir_dispuniform_ama  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  7	Against Medical Advice (AMA)
+		,sum(case when pv_ncs.dispuniform = 99 then 1 else 0 end) pir_dispuniform_unk  --disposition of the patient at discharge (routine, transfer to another hospital, died, etc.  99	Discharge alive, destination unknown
 --  ,pv_ncs.pay1		
- 		,sum(case when pv_ncs.pay1::INT = 1 then 1 else 0 end) pir_pay1_1 --Expected primary payer, uniform 	Medicare
- 		,sum(case when pv_ncs.pay1::INT = 2 then 1 else 0 end) pir_pay1_2 --Expected primary payer, uniform 	Medicaid
- 		,sum(case when pv_ncs.pay1::INT = 3 then 1 else 0 end) pir_pay1_3 --Expected primary payer, uniform   Private insurance
- 		,sum(case when pv_ncs.pay1::INT = 4 then 1 else 0 end) pir_pay1_4 --Expected primary payer, uniform   Self-pay
- 		,sum(case when pv_ncs.pay1::INT = 5 then 1 else 0 end) pir_pay1_5 --Expected primary payer, uniform   No charge
- 		,sum(case when pv_ncs.pay1::INT = 6 then 1 else 0 end) pir_pay1_6 --Expected primary payer, uniform   Other
- 		,sum(case when pv_ncs.pay1::INT NOT IN(1,2,3,4,5,6) then 1 else 0 end) pir_pay1_7 --Expected primary payer, uniform  **Missing
+ 		,sum(case when pv_ncs.pay1 = 1 then 1 else 0 end) pir_pay1_1 --Expected primary payer, uniform 	Medicare
+ 		,sum(case when pv_ncs.pay1 = 2 then 1 else 0 end) pir_pay1_2 --Expected primary payer, uniform 	Medicaid
+ 		,sum(case when pv_ncs.pay1 = 3 then 1 else 0 end) pir_pay1_3 --Expected primary payer, uniform   Private insurance
+ 		,sum(case when pv_ncs.pay1 = 4 then 1 else 0 end) pir_pay1_4 --Expected primary payer, uniform   Self-pay
+ 		,sum(case when pv_ncs.pay1 = 5 then 1 else 0 end) pir_pay1_5 --Expected primary payer, uniform   No charge
+ 		,sum(case when pv_ncs.pay1 = 6 then 1 else 0 end) pir_pay1_6 --Expected primary payer, uniform   Other
+ 		,sum(case when pv_ncs.pay1 NOT IN(1,2,3,4,5,6) then 1 else 0 end) pir_pay1_7 --Expected primary payer, uniform  **Missing
 --  ,pv_ncs.pl_nchs	
-		,sum(case when pv_ncs.pl_nchs::INT = 1 then 1 else 0 end) pir_pl_nchs_1 --Patient Location: NCHS Urban-Rural Code   "Central" counties of metro areas of >=1 million population
- 		,sum(case when pv_ncs.pl_nchs::INT = 2 then 1 else 0 end) pir_pl_nchs_2 --Patient Location: NCHS Urban-Rural Code   "Fringe" counties of metro areas of >=1 million population
- 		,sum(case when pv_ncs.pl_nchs::INT = 3 then 1 else 0 end) pir_pl_nchs_3 --Patient Location: NCHS Urban-Rural Code   Counties in metro areas of 250,000-999,999 population
- 		,sum(case when pv_ncs.pl_nchs::INT = 4 then 1 else 0 end) pir_pl_nchs_4 --Patient Location: NCHS Urban-Rural Code   Counties in metro areas of 50,000-249,999 population
- 		,sum(case when pv_ncs.pl_nchs::INT = 5 then 1 else 0 end) pir_pl_nchs_5 --Patient Location: NCHS Urban-Rural Code   Micropolitan counties
- 		,sum(case when pv_ncs.pl_nchs::INT = 6 then 1 else 0 end) pir_pl_nchs_6 --Patient Location: NCHS Urban-Rural Code   Not metropolitan or micropolitan counties
- 		,sum(case when pv_ncs.pl_nchs::INT NOT IN(1,2,3,4,5,6) then 1 else 0 end) pir_pl_nchs_7   --Patient Location: NCHS Urban-Rural Code  **Missing
+		,sum(case when pv_ncs.pl_nchs = 1 then 1 else 0 end) pir_pl_nchs_1 --Patient Location: NCHS Urban-Rural Code   "Central" counties of metro areas of >=1 million population
+ 		,sum(case when pv_ncs.pl_nchs = 2 then 1 else 0 end) pir_pl_nchs_2 --Patient Location: NCHS Urban-Rural Code   "Fringe" counties of metro areas of >=1 million population
+ 		,sum(case when pv_ncs.pl_nchs = 3 then 1 else 0 end) pir_pl_nchs_3 --Patient Location: NCHS Urban-Rural Code   Counties in metro areas of 250,000-999,999 population
+ 		,sum(case when pv_ncs.pl_nchs = 4 then 1 else 0 end) pir_pl_nchs_4 --Patient Location: NCHS Urban-Rural Code   Counties in metro areas of 50,000-249,999 population
+ 		,sum(case when pv_ncs.pl_nchs = 5 then 1 else 0 end) pir_pl_nchs_5 --Patient Location: NCHS Urban-Rural Code   Micropolitan counties
+ 		,sum(case when pv_ncs.pl_nchs = 6 then 1 else 0 end) pir_pl_nchs_6 --Patient Location: NCHS Urban-Rural Code   Not metropolitan or micropolitan counties
+ 		,sum(case when pv_ncs.pl_nchs NOT IN(1,2,3,4,5,6) then 1 else 0 end) pir_pl_nchs_7   --Patient Location: NCHS Urban-Rural Code  **Missing
 -- 		,pv_ncs.prday1
-	  ,sum(case when pv_ncs.prday1::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday1_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday1::INT IN(0) then 1 else 0 end) pir_prday1_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday1::INT >0 and pv_ncs.prday1::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday1_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday1 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday1_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday1 IN(0) then 1 else 0 end) pir_prday1_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday1 >0 and pv_ncs.prday1 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday1_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday2
-	  ,sum(case when pv_ncs.prday2::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday2_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday2::INT IN(0) then 1 else 0 end) pir_prday2_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday2::INT >0 and pv_ncs.prday2::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday2_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday2 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday2_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday2 IN(0) then 1 else 0 end) pir_prday2_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday2 >0 and pv_ncs.prday2 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday2_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday3
-	  ,sum(case when pv_ncs.prday3::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday3_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday3::INT IN(0) then 1 else 0 end) pir_prday3_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday3::INT >0 and pv_ncs.prday3::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday3_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday3 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday3_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday3 IN(0) then 1 else 0 end) pir_prday3_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday3 >0 and pv_ncs.prday3 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday3_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday4
-	  ,sum(case when pv_ncs.prday4::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday4_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday4::INT IN(0) then 1 else 0 end) pir_prday4_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday4::INT >0 and pv_ncs.prday4::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday4_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday4 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday4_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday4 IN(0) then 1 else 0 end) pir_prday4_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday4 >0 and pv_ncs.prday4 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday4_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday5
-	  ,sum(case when pv_ncs.prday5::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday5_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday5::INT IN(0) then 1 else 0 end) pir_prday5_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday5::INT >0 and pv_ncs.prday5::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday5_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday5 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday5_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday5 IN(0) then 1 else 0 end) pir_prday5_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday5 >0 and pv_ncs.prday5 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday5_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday6
-	  ,sum(case when pv_ncs.prday6::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday6_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday6::INT IN(0) then 1 else 0 end) pir_prday6_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday6::INT >0 and pv_ncs.prday6::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday6_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday6 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday6_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday6 IN(0) then 1 else 0 end) pir_prday6_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday6 >0 and pv_ncs.prday6 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday6_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday7
-	  ,sum(case when pv_ncs.prday7::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday7_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday7::INT IN(0) then 1 else 0 end) pir_prday7_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday7::INT >0 and pv_ncs.prday7::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday7_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday7 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday7_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday7 IN(0) then 1 else 0 end) pir_prday7_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday7 >0 and pv_ncs.prday7 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday7_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday8
-	  ,sum(case when pv_ncs.prday8::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday8_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday8::INT IN(0) then 1 else 0 end) pir_prday8_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday8::INT >0 and pv_ncs.prday8::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday8_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday8 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday8_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday8 IN(0) then 1 else 0 end) pir_prday8_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday8 >0 and pv_ncs.prday8 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday8_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday9
-	  ,sum(case when pv_ncs.prday9::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday9_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday9::INT IN(0) then 1 else 0 end) pir_prday9_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday9::INT >0 and pv_ncs.prday9::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday9_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday9 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday9_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday9 IN(0) then 1 else 0 end) pir_prday9_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday9 >0 and pv_ncs.prday9 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday9_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday10
-	  ,sum(case when pv_ncs.prday10::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday10_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday10::INT IN(0) then 1 else 0 end) pir_prday10_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday10::INT >0 and pv_ncs.prday10::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday10_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday10 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday10_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday10 IN(0) then 1 else 0 end) pir_prday10_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday10 >0 and pv_ncs.prday10 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday10_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday11
-	  ,sum(case when pv_ncs.prday11::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday11_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday11::INT IN(0) then 1 else 0 end) pir_prday11_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday11::INT >0 and pv_ncs.prday11::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday11_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday11 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday11_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday11 IN(0) then 1 else 0 end) pir_prday11_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday11 >0 and pv_ncs.prday11 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday11_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday12
-	  ,sum(case when pv_ncs.prday12::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday12_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday12::INT IN(0) then 1 else 0 end) pir_prday12_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday12::INT >0 and pv_ncs.prday12::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday12_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday12 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday12_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday12 IN(0) then 1 else 0 end) pir_prday12_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday12 >0 and pv_ncs.prday12 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday12_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday13
-	  ,sum(case when pv_ncs.prday13::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday13_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday13::INT IN(0) then 1 else 0 end) pir_prday13_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday13::INT >0 and pv_ncs.prday13::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday13_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday13 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday13_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday13 IN(0) then 1 else 0 end) pir_prday13_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday13 >0 and pv_ncs.prday13 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday13_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday14
-	  ,sum(case when pv_ncs.prday14::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday14_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday14::INT IN(0) then 1 else 0 end) pir_prday14_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday14::INT >0 and pv_ncs.prday14::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday14_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+	  ,sum(case when pv_ncs.prday14 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday14_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday14 IN(0) then 1 else 0 end) pir_prday14_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday14 >0 and pv_ncs.prday14 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday14_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
 -- 		,pv_ncs.prday15
-	  ,sum(case when pv_ncs.prday15::INT IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday15_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
-		,sum(case when pv_ncs.prday15::INT IN(0) then 1 else 0 end) pir_prday15_admit  --Number of days from admission to procedure n, 0	Day of admission
-		,sum(case when pv_ncs.prday15::INT >0 and pv_ncs.prday15::INT <= (pv_ncs.los::INT +3) then 1 else 0 end) pir_prday15_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
- 		,sum(pv_ncs.rehabtransfer::INT) pir_rehabtransfer   --A combined record involving transfer to rehabilitation, evaluation, or other aftercare
- 		,sum(pv_ncs.resident::INT) pir_resident   --Identifies patient as a resident of the State in which he or she received hospital care
- 		,sum(case when pv_ncs.samedayevent::INT = 0 then 1 else 0 end) pir_samedayevent_noxfer  --	Identifies transfer and same-day stay collapsed records, 	Not a transfer or other same-day stay
- 		,sum(case when pv_ncs.samedayevent::INT = 1 then 1 else 0 end) pir_samedayevent_xfer  --	Identifies transfer and same-day stay collapsed records, 	Transfer involving two discharges from different hospitals
- 		,sum(case when pv_ncs.samedayevent::INT = 2 then 1 else 0 end) pir_samedayevent_diffHosp  --	Identifies transfer and same-day stay collapsed records, 		Same-day stay involving two discharges from different hospitals
- 		,sum(case when pv_ncs.samedayevent::INT = 3 then 1 else 0 end) pir_samedayevent_sameHosp  --	Identifies transfer and same-day stay collapsed records, 	Same-day stay involving two discharges at the same hospital
- 		,sum(case when pv_ncs.samedayevent::INT = 4 then 1 else 0 end) pir_samedayevent_3orMoredisch  --	Identifies transfer and same-day stay collapsed records, 	Same-day stay involving three or more discharges at the same or different hospitals		
- 		,sum(case when pv_ncs.totchg::INT NOT IN(-999999999) then pv_ncs.totchg::INT else 0 end) pir_totalchg   --Total charges, cleaned
+	  ,sum(case when pv_ncs.prday15 IN(-4,-3,-2,-1) then 1 else 0 end) pir_prday15_preadmit  --Number of days from admission to procedure n, -4 - -1	Days prior to admission
+		,sum(case when pv_ncs.prday15 IN(0) then 1 else 0 end) pir_prday15_admit  --Number of days from admission to procedure n, 0	Day of admission
+		,sum(case when pv_ncs.prday15 >0 and pv_ncs.prday15 <= (pv_ncs.los +3) then 1 else 0 end) pir_prday15_postadmit  --Number of days from admission to procedure n, 1 - LOS+3	Days after admission
+ 		,sum(pv_ncs.rehabtransfer) pir_rehabtransfer   --A combined record involving transfer to rehabilitation, evaluation, or other aftercare
+ 		,sum(pv_ncs.resident) pir_resident   --Identifies patient as a resident of the State in which he or she received hospital care
+ 		,sum(case when pv_ncs.samedayevent = 0 then 1 else 0 end) pir_samedayevent_noxfer  --	Identifies transfer and same-day stay collapsed records, 	Not a transfer or other same-day stay
+ 		,sum(case when pv_ncs.samedayevent = 1 then 1 else 0 end) pir_samedayevent_xfer  --	Identifies transfer and same-day stay collapsed records, 	Transfer involving two discharges from different hospitals
+ 		,sum(case when pv_ncs.samedayevent = 2 then 1 else 0 end) pir_samedayevent_diffHosp  --	Identifies transfer and same-day stay collapsed records, 		Same-day stay involving two discharges from different hospitals
+ 		,sum(case when pv_ncs.samedayevent = 3 then 1 else 0 end) pir_samedayevent_sameHosp  --	Identifies transfer and same-day stay collapsed records, 	Same-day stay involving two discharges at the same hospital
+ 		,sum(case when pv_ncs.samedayevent = 4 then 1 else 0 end) pir_samedayevent_3orMoredisch  --	Identifies transfer and same-day stay collapsed records, 	Same-day stay involving three or more discharges at the same or different hospitals		
+ 		,sum(case when pv_ncs.totchg NOT IN(-999999999) then pv_ncs.totchg else 0 end) pir_totalchg   --Total charges, cleaned
 
 FROM 
 	nrd_core AS ncs 
@@ -271,9 +271,9 @@ WHERE
 	AND ncs.dmonth NOT IN ('1','12')
 	AND ncs.dispuniform <> '20'
 	AND ncs.key_nrd <> pv_ncs.key_nrd
-	AND ncs.nrd_daystoevent::INT >= pv_ncs.nrd_daystoevent::INT
-	AND (ncs.nrd_daystoevent::INT - pv_ncs.los::INT - pv_ncs.nrd_daystoevent::INT) <= 30
-	AND (ncs.nrd_daystoevent::INT - pv_ncs.los::INT - pv_ncs.nrd_daystoevent::INT) >=0
+	AND ncs.nrd_daystoevent >= pv_ncs.nrd_daystoevent
+	AND (ncs.nrd_daystoevent - pv_ncs.los - pv_ncs.nrd_daystoevent) <= 30
+	AND (ncs.nrd_daystoevent - pv_ncs.los - pv_ncs.nrd_daystoevent) >=0
 
 	
 /*For testing*/	
@@ -289,13 +289,13 @@ GROUP BY
 		,ncs.drg
 		,pv_ncs.drg
 		,case when ncs.drg = pv_ncs.drg then 1 else 0 end
-		,(ncs.nrd_daystoevent::INT - pv_ncs.los::INT - pv_ncs.nrd_daystoevent::INT) 
+		,(ncs.nrd_daystoevent - pv_ncs.los - pv_ncs.nrd_daystoevent) 
 		,ncs.target 
 
 ORDER BY 
 		 ncs.nrd_visitlink  --designates the unique pt
-		,ncs.nrd_daystoevent::INT 
-		,pv_ncs.nrd_daystoevent::INT) as tr
+		,ncs.nrd_daystoevent 
+		,pv_ncs.nrd_daystoevent) as tr
 
 WHERE 
 		pir_mostrecent_admit = 1;
