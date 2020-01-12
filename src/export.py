@@ -2,7 +2,7 @@ def export(cursor, sample=False):
     '''A function to export the feature set from the database. 
     Requires the cursor and bloolean value for sample. sample=True exports 1% sample.'''
     select = 'SELECT * FROM feature_set'
-    table_sample = " WHERE substring(key_nrd,8,1) = '1' and substring(key_nrd,9,1)='3'"
+    table_sample = " WHERE substring(CAST(key_nrd AS VARCHAR(20)),8,1) = '1' and substring(CAST(key_nrd AS VARCHAR(20)),9,1)='3'"
     if sample:
         query = select + table_sample
         file_name = 'data/feature_set_sample.csv'
