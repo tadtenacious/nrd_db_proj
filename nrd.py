@@ -26,8 +26,11 @@ def main(args):
         else:
             sample = False
         from src.export import export
-        from src.db import build_connection
-        con = build_connection('config.json')
+        from src.db import build_connection, build_con_string
+        if sample:
+            con = build_connection('config.json')
+        else:
+            con = build_con_string('config.json')
         export(con, sample)
         con.close()
         return

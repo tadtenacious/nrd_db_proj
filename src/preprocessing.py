@@ -35,8 +35,12 @@ def add_age_bins(chunk):
     age_bins = [0, 4, 19, 37, 55, 73, 90]
     chunk = chunk.assign(age_bins=cut(chunk['age'], age_bins, right=False,
                                       labels=age_labels))
-    dummies = get_dummies(chunk['age_bins'], drop_first=True)
-    chunk = chunk.join(dummies).drop('age_bins', axis=1)
+    for lbl in age_labels[1:]:
+        chunk[lbl] = chunk['age_bins'].apply(
+            lambda x, val=lbl: 1 if x == val else 0).astype('uint8')
+    chunk = chunk.drop('age_bins', axis=1)
+    # dummies = get_dummies(chunk['age_bins'], drop_first=True)
+    # chunk = chunk.join(dummies).drop('age_bins', axis=1)
     return chunk
 
 
