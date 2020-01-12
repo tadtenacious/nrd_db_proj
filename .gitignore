@@ -4,3 +4,5 @@ config.json
 .vscode
 *.pyc
 *.TXT
+data/sample_data.parquet
+data.full_data.parquet
