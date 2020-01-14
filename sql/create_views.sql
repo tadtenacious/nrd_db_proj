@@ -301,7 +301,7 @@ WHERE
 		pir_mostrecent_admit = 1;
 		
 ---------------------------------------
-DROP MATERIALIZED VIEW  IF EXISTS feature_set;
+DROP MATERIALIZED VIEW  IF EXISTS feature_set CASCADE;
 CREATE MATERIALIZED VIEW feature_set AS
 SELECT DISTINCT
 c.target,
@@ -612,7 +612,12 @@ COALESCE(f.pif_samedayevent_xfer,0) pif_samedayevent_xfer,
 COALESCE(f.pif_samedayevent_diffhosp,0) pif_samedayevent_diffhosp,
 COALESCE(f.pif_samedayevent_samehosp,0) pif_samedayevent_samehosp,
 COALESCE(f.pif_samedayevent_3ormoredisch,0) pif_samedayevent_3ormoredisch,
-COALESCE(f.pif_totalchg,0) pif_totalchg
+COALESCE(f.pif_totalchg,0) pif_totalchg,
+CASE WHEN c.age BETWEEN 4 AND 18 THEN 1 ELSE 0 END AS "4-18",
+CASE WHEN c.age BETWEEN 19 AND 36 THEN 1 ELSE 0 END AS "19-36",
+CASE WHEN c.age BETWEEN 37 AND 54 THEN 1 ELSE 0 END AS "37-54",
+CASE WHEN c.age BETWEEN 55 AND 72 THEN 1 ELSE 0 END AS "55-72",
+CASE WHEN c.age >= 73 THEN 1 ELSE 0 END AS "73+"
 
 FROM 
 	nrd_core c
@@ -640,3 +645,10 @@ WHERE
 	1=1
 	AND c.dmonth NOT IN ('1','12')
 	AND c.died = '0';
+
+DROP MATERIALIZED VIEW  IF EXISTS feature_set_sample;
+CREATE MATERIALIZED VIEW feature_set_sample AS
+
+SELECT * FROM feature_set
+ WHERE substring(CAST(key_nrd AS VARCHAR(20)),8,1) = '1' 
+ and substring(CAST(key_nrd AS VARCHAR(20)),9,1)='3';
