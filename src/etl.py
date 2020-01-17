@@ -121,7 +121,7 @@ def do_etl():
         return
     etl(con, cursor)
     make_views(con, cursor)
-    export(cursor, sample=False)
-    export(cursor, sample=True)
+    export(con, sample=False)
+    export(con, sample=True)
     con.close()
     return

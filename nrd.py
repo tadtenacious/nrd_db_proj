@@ -28,16 +28,15 @@ def main(args):
         from src.export import export
         from src.db import build_connection
         con = build_connection('config.json')
-        cursor = con.cursor()
-        export(cursor, sample)
+        export(con, sample)
         con.close()
         return
     # given the model argument, run the model on the sample or full data set
     if args.model:
         if args.model == 'sample':
-            fpath = 'data/feature_set_sample.csv'
+            fpath = 'data/sample_data'
         else:
-            fpath = 'data/feature_set.csv'
+            fpath = 'data/full_data'
         from src.model import run_model
         run_model(fpath)
         return

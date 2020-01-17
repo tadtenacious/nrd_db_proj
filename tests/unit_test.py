@@ -1,13 +1,13 @@
 import os
 import sys
 from pandas import DataFrame, Series
-from numpy import nan
+from pandas.testing import assert_frame_equal
+import numpy as np
 import requests
-# import pytest
+import pytest
 
 sys.path.append('..')
 from src.db import build_connection, reader, check_table, load_csv
-from src.preprocessing import fill_mean, fill_cat, preprocess
 from src.supplement import DRG_FORMAT_URL, download_file
 
 
@@ -52,34 +52,6 @@ def test_load_csv(cursor, tmpdir):
     cursor.execute('SELECT * FROM test.test_load')
     check_data = [tuple(i) for i in cursor.fetchall()]
     assert check_data == [(1, 1), (2, 2)]
-
-
-def test_fill_cat():
-    df = DataFrame(
-        {'col1': [1, 2, 3, -5], 'col2': [-4, -3, -2, 0]}).pipe(fill_cat)
-    assert df.equals(
-        DataFrame({'col1': [1.0, 2.0, 3.0, -1.0], 'col2': [-4, -3, -2, 0]}))
-
-
-def test_fill_mean():
-    # fill with means from dataframe
-    df1 = DataFrame(
-        {'col1': [-99, 10, 10], 'col2': [-98, 100, 100]}).pipe(fill_mean)
-    assert df1.equals(DataFrame(
-        {'col1': [10.0, 10.0, 10.0], 'col2': [-98, 100, 100]}))
-    # fill with means from another source
-    means = Series([9, 9], index=['col1', 'col2'])
-    df2 = DataFrame(
-        {'col1': [-99, 10, 10], 'col2': [-98, 100, 100]}).pipe(fill_mean, means=means)
-    assert df2.equals(DataFrame(
-        {'col1': [9.0, 10.0, 10.0], 'col2': [-98, 100, 100]}))
-
-
-def test_preprocessing():
-    df1 = DataFrame(
-        {'col1': [100, 100, -99], 'col2': [1, -4, -5]}).pipe(preprocess)
-    assert df1.equals(
-        DataFrame({'col1': [100.0, 100.0, 100.0], 'col2': [1.0, -4.0, -1.0]}))
 
 
 def test_download_file(tmpdir):
