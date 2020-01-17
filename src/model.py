@@ -1,36 +1,33 @@
-import json
 import os
 import numpy as np
-import pandas as pd
+import dask.dataframe as dd
 from lightgbm import LGBMClassifier
+from sklearn.impute import SimpleImputer
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
+from sklearn.pipeline import make_pipeline
 
-from .preprocessing import fill_cat, fill_mean, preprocess
 
-
-def run_model(file_path='data/feature_set_sample.csv'):
+def run_model(file_path='data/sample_data'):
+    '''A function to read the data, impute missing values,
+    and run the model with stratified k-fold cross-validation.
+    Calculates AUC and prints values to screen.
+    '''
     if not os.path.exists(file_path):
         raise FileNotFoundError(
             file_path + ' not found. Try running python nrd.py -h for help.')
-    with open('data/dtypes.json', 'r') as f:
-        dtypes = json.loads(f.read())
-    use_cols = list(dtypes.keys())
-    X = pd.read_csv(file_path, usecols=use_cols, dtype=dtypes)
+    # read file, drop unique identifiers, convert from dask to pandas dataframe
+    X = dd.read_parquet(file_path).drop(
+        ['hosp_nrd', 'key_nrd'], axis=1).compute()
     y = X['target']
-    X.drop(['target', 'hosp_nrd'], axis=1, inplace=True)
-    age_labels = ['0-3', '5-18', '19-36', '37-54', '55-72', '73+']
-    age_bins = [0, 4, 19, 37, 55, 73, 90]
-    X['age_bins'] = pd.cut(X['age'], age_bins, right=False,
-                           labels=age_labels)
-    dummies = pd.get_dummies(X['age_bins'], drop_first=True)
-    X = X.join(dummies).drop('age_bins', axis=1)
+    X = X.drop('target', axis=1)
     folds = 5
     skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=101)
     scores = []
     print('Starting training...')
     # oof_preds = np.zeros(X.shape[0])
     for i, (train_index, test_index) in enumerate(skf.split(X, y), 1):
+        imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
         clf = LGBMClassifier(boosting_type='gbdt', class_weight=None, colsample_bytree=0.6,
                              importance_type='split', learning_rate=0.1, max_depth=-1,
                              metric='auc', min_child_samples=18, min_child_weight=0.001,
@@ -38,13 +35,11 @@ def run_model(file_path='data/feature_set_sample.csv'):
                              objective='binary', random_state=None, reg_alpha=0.0,
                              reg_lambda=0.0, scale_pos_weight=7.265, seed=101, silent=True,
                              subsample=0.7, subsample_for_bin=200000, subsample_freq=0)
-        # preprocess the training and testing data in each split
-        X_train, X_test = X.loc[train_index, ].pipe(
-            preprocess), X.loc[test_index, ]
-        X_test = X_test.pipe(fill_mean, means=X_train.mean()).pipe(fill_cat)
-        y_train, y_test = y[train_index], y[test_index]
-        clf.fit(X_train, y_train)
-        probas = clf.predict_proba(X_test)[:, 1]
+        lgbm_pipeline = make_pipeline(imputer, clf)
+        X_train, X_test = X.iloc[train_index, ], X.iloc[test_index, ]
+        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+        lgbm_pipeline.fit(X_train, y_train)
+        probas = lgbm_pipeline.predict_proba(X_test)[:, 1]
         auc = roc_auc_score(y_test, probas)
         print('Fold {} AUC: {:.4f}'.format(i, auc))
         scores.append(auc)
