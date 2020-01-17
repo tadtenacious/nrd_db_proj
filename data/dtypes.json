@@ -8,6 +8,7 @@
     "female": "int8",
     "hcup_ed": "int8",
     "hosp_nrd": "int32",
+    "key_nrd": "int64",
     "los": "int16",
     "i10_ndx": "int8",
     "i10_necause": "int8",
