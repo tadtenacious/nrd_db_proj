@@ -3,12 +3,35 @@ from pandas import cut, get_dummies
 import json
 
 
-def prepare_chunk(chunk, dtypes):
+def prepare_chunk(chunk):
     '''Prepare the dataframe chunk by converting the datatypes and dropping the
     unique identifiers, key_nrd and hosp_nrd.
     '''
-    chunk = chunk.astype(dtypes).drop(['key_nrd', 'hosp_nrd'], axis=1)
-    chunk
+    chunk = chunk.drop(['key_nrd', 'hosp_nrd'], axis=1)
+    float_cols = [
+        'los',
+        'pl_nchs',
+        'prday1',
+        'prday2',
+        'prday3',
+        'prday4',
+        'prday5',
+        'prday6',
+        'prday7',
+        'prday8',
+        'prday9',
+        'prday10',
+        'prday11',
+        'prday12',
+        'prday13',
+        'prday14',
+        'prday15',
+        'totchg',
+        'pir_totalchg',
+        'pif_totalchg'
+    ]
+    for col in float_cols:
+        chunk[col] = chunk[col].astype('float64')
     return chunk
 
 
@@ -44,8 +67,12 @@ def add_age_bins(chunk):
     return chunk
 
 
-def process_chunk(chunk, dtypes):
+def process_chunk(chunk):
     '''A function to run all initial preprocessing steps.'''
-    chunk = chunk.pipe(prepare_chunk, dtypes=dtypes).pipe(add_age_bins)\
-        .pipe(handle_missing)
+    chunk = prepare_chunk(chunk)
+    chunk = add_age_bins(chunk)
+    chunk = handle_missing(chunk)
+
+    # chunk = chunk.pipe(prepare_chunk).pipe(add_age_bins)\
+    #     .pipe(handle_missing).astype('float64')
     return chunk
